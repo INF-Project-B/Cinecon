@@ -1,4 +1,2 @@
-# Cinecon 
+# Cinecon
 🎥 A console application for cinema visitors and management.
-Nuur test
-
