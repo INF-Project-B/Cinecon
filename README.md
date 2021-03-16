@@ -1,4 +1,4 @@
-# Cinecon - Project B
+# Cinecon 
 🎥 A console application for cinema visitors and management.
 Nuur test
 
