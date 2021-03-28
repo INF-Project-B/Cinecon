@@ -1,0 +1,29 @@
+[
+    {
+        "id": 1,
+        "title": "Godzilla vs Kong",
+        "description": "In Godzilla vs. Kong nemen deze twee mythische tegenstanders het tegen elkaar op in een spectaculaire strijd...",
+        "genres": ["Science fiction", "Fantasy"],
+        "room": 1,
+        "hours": ["16:00-18:00", "21:00-23:00"],
+        "bring_id": true
+    },
+    {
+        "id": 2,
+        "title": "Tenet",
+        "description": "John David Washington is de Protagonist in Christopher Nolan’s nieuwe film, de actiethriller Tenet. Slechts gewapend met één woord – Tenet – moet de Protagonist de wereld zien te redden van de ondergang...",
+        "genres": ["Thriller", "Drama", "Actie"],
+        "room": 2,
+        "hours": ["15:00-19:00", "20:00-22:00"],
+        "bring_id": true
+    },
+    {
+        "id": 3,
+        "title": "Mulan",
+        "description": "De Keizer van China besluit dat één man per gezin moet dienen in het Keizerlijke leger om het land te kunnen verdedigen tegen indringers uit het Noorden. In het geheim neemt Hua Mulan, de oudste dochter van een respectabele krijger, de plaats in van haar doodzieke vader...",
+        "genres": ["Drama", "Avontuur"],
+        "room": 3,
+        "hours": ["14:00-16:00", "19:00-21:00"],
+        "bring_id": false
+    }
+]
