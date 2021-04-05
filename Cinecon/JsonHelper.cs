@@ -1,16 +1,51 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 
 namespace Cinecon
 {
     public class JsonHelper
     {
         public static List<Movie> Movies { get; set; }
+        public static List<MenuCategory> Menu { get; set; }
 
         public static void LoadJson()
         {
-            Movies = JsonConvert.DeserializeObject<List<Movie>>(File.ReadAllText("Assets/movies.json"));
+            AddMovies();
+            AddMenu();
+        }
+
+        private static void AddMovies()
+            => Movies = JsonConvert.DeserializeObject<List<Movie>>(File.ReadAllText("Assets/movies.json"));
+
+        private static void AddMenu()
+        {
+            var menuCategoriesJson = (JObject)JsonConvert.DeserializeObject(File.ReadAllText("Assets/menu.json"));
+
+            var menu = new List<MenuCategory>();
+
+            foreach (var menuCategory in menuCategoriesJson)
+            {
+                var menuItems = new List<MenuItem>();
+
+                foreach (var menuItem in menuCategory.Value as JObject)
+                {
+                    menuItems.Add(new MenuItem
+                    {
+                        Name = menuItem.Key,
+                        ItemTypes = menuItem.Value.ToObject<Dictionary<string, double>>()
+                    });
+                }
+
+                menu.Add(new MenuCategory
+                {
+                    Name = menuCategory.Key,
+                    MenuItems = menuItems
+                });
+            }
+
+            Menu = menu;
         }
     }    
     
@@ -23,5 +58,18 @@ namespace Cinecon
         public int Room { get; set; }
         public string[] Hours { get; set; }
         public bool BringId { get; set; }
+    }
+
+    public class MenuCategory
+    {
+        public string Name { get; set; }
+        public List<MenuItem> MenuItems { get; set; }
+    }
+
+    public class MenuItem
+    {
+        public string Name { get; set; }
+        // The keys are the size/product types. The values are the prices.
+        public Dictionary<string, double> ItemTypes { get; set; }
     }
 }
