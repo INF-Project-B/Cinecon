@@ -12,7 +12,7 @@ namespace Cinecon
             var visitorsMenu = new ChoiceMenu(new Dictionary<string, Action>
             {
                 { "Films", ShowFilms },
-                { "Snacks", ShowSnacks },
+                { "Menu", ShowMenu },
             });
 
             var visitors = visitorsMenu.MakeChoice();
@@ -25,7 +25,7 @@ namespace Cinecon
 
         }
 
-        public static void ShowSnacks()
+        public static void ShowMenu()
         {
 
         }
