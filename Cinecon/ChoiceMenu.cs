@@ -6,7 +6,7 @@ namespace Cinecon
 {
     public class ChoiceMenu
     {
-        private readonly Dictionary<string, Action> _choices = new Dictionary<string, Action>();
+        private readonly Dictionary<string, Action> _choices;
 
         public ChoiceMenu(Dictionary<string, Action> choices)
         {
