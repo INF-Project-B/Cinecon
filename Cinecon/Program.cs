@@ -11,7 +11,7 @@ namespace Cinecon
             // Load JSON files into project.
             JsonHelper.LoadJson();
 
-            ConsoleHelper.WriteLogo(ConsoleColor.Yellow);
+            ConsoleHelper.WriteLogo(LogoType.Cinecon, ConsoleColor.Yellow);
 
             Console.WriteLine("Welkom bij Cinecon!\nBent u een medewerker of bezoeker?");
 
