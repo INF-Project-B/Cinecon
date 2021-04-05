@@ -6,57 +6,77 @@ namespace Cinecon
 {
     public class ChoiceMenu
     {
-        private readonly Dictionary<string, Action> _choices;
+        private readonly List<KeyValuePair<string, Action>> _choices;
 
-        public ChoiceMenu(Dictionary<string, Action> choices)
+        public ChoiceMenu(Dictionary<string, Action> choices, bool addBackChoice = false)
         {
-            _choices = choices;
+            if (addBackChoice)
+                choices["Terug"] = null;
+
+            _choices = choices.ToList();
         }
 
         public KeyValuePair<string, Action> MakeChoice()
         {
+            Console.CursorVisible = false;
+
+            int index = 0;
+
+            WriteMenu(index);
+
+            ConsoleKeyInfo keyInfo;
+            var lastPressedTime = DateTime.Now;
+
             while (true)
             {
-                Console.WriteLine("\n");
+                keyInfo = Console.ReadKey(true);
 
-                // Write all choices in the console.
-                for (int i = 0; i < _choices.Count; i++)
-                    Console.WriteLine($"[{i + 1}] {_choices.ElementAt(i).Key}");
-
-                Console.WriteLine("\n");
-
-                var choiceRead = Console.ReadLine();
-
-                KeyValuePair<string, Action> choice;
-
-                // If user typed number.
-                if (int.TryParse(choiceRead, out int choiceNumber))
+                if (DateTime.Now > lastPressedTime.AddMilliseconds(50))
                 {
-                    if (choiceNumber > _choices.Count || choiceNumber < 1)
+                    if (keyInfo.Key == ConsoleKey.DownArrow)
                     {
-                        Console.Clear();
-                        Console.WriteLine("Invalid number!");
-                        continue;
+                        index = index + 1 < _choices.Count ? index + 1 : 0;
+                        WriteMenu(index);
                     }
 
-                    choice = _choices.ElementAt(choiceNumber - 1);
+                    if (keyInfo.Key == ConsoleKey.UpArrow)
+                    {
+                        index = index - 1 >= 0 ? index - 1 : _choices.Count - 1;
+                        WriteMenu(index);
+                    }
+
+                    if (keyInfo.Key == ConsoleKey.Enter)
+                    {
+                        Console.Clear();
+                        return _choices[index];
+                    }
+
+                    if (keyInfo.Key == ConsoleKey.Backspace && _choices.Any(x => x.Key == "Terug"))
+                    {
+                        return _choices.FirstOrDefault(x => x.Key == "Terug");
+                    }    
                 }
-                // If user typed string.
+
+                lastPressedTime = DateTime.Now;
+            }
+        }
+
+        private void WriteMenu(int index)
+        {
+            Console.Clear();
+            ConsoleHelper.WriteLogo(ConsoleColor.Red);
+
+            if (ConsoleHelper.LogoType == LogoType.Cinecon)
+                ConsoleHelper.ColorWriteLine("  Welkom bij Cinecon!\n  Bent u een medewerker of bezoeker?\n", ConsoleColor.Yellow);
+
+            foreach (var choice in _choices)
+            {
+                if (choice.Key == "Terug" || choice.Key == "Exit")
+                    Console.WriteLine();
+                if (choice.Key == _choices.ElementAt(index).Key)
+                    ConsoleHelper.ColorWriteLine($" > {choice.Key}", ConsoleColor.Red);
                 else
-                {
-                    if (_choices.Keys.Any(x => x.ToLower() == choiceRead.ToLower()))
-                        choice = _choices.FirstOrDefault(x => x.Key.ToLower() == choiceRead.ToLower());
-                    else
-                    {
-                        Console.Clear();
-                        Console.WriteLine("Invalid string!");
-                        continue;
-                    }
-                }
-
-                Console.Clear();
-
-                return choice;
+                    Console.WriteLine($"  {choice.Key}");
             }
         }
     }
