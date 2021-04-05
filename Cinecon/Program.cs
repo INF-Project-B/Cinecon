@@ -7,7 +7,6 @@ namespace Cinecon
     {
         static void Main()
         {
-            // Load JSON files into project.
             JsonHelper.LoadJson();
 
             StartChoice();
@@ -15,6 +14,8 @@ namespace Cinecon
 
         public static void StartChoice()
         {
+            ConsoleHelper.LogoType = LogoType.Cinecon;
+
             var choiceMenu = new ChoiceMenu(new Dictionary<string, Action>
             {
                 { "Bezoeker", VisitorsMenu.ShowVisitorMenu },
