@@ -8,7 +8,7 @@ namespace Cinecon
     {
         public static void ShowVisitorMenu()
         {
-            ConsoleHelper.ColorWriteLine("Bezoekers Menu", ConsoleColor.Yellow);
+            ConsoleHelper.WriteLogo(LogoType.Visitor, ConsoleColor.Yellow);
 
             var visitorsMenu = new ChoiceMenu(new Dictionary<string, Action>
             {
@@ -16,19 +16,35 @@ namespace Cinecon
                 { "Menu", ShowMenu },
             });
 
-            var visitors = visitorsMenu.MakeChoice();
+            var visitorsMenuChoice = visitorsMenu.MakeChoice();
 
-            visitors.Value();
+            visitorsMenuChoice.Value();
         }
 
-        public static void ShowFilms()
+        private static void ShowFilms()
         {
-
+            ConsoleHelper.WriteLogo(LogoType.Films, ConsoleColor.Yellow);
         }
 
-        public static void ShowMenu()
+        private static void ShowMenu()
         {
-            
+            ConsoleHelper.WriteLogo(LogoType.Menu, ConsoleColor.Yellow);
+
+            var categoryChoices = new Dictionary<string, Action>();
+
+            foreach (var category in JsonHelper.Menu)
+                categoryChoices[category.Name] = null;
+
+            var categoryChoiceMenu = new ChoiceMenu(categoryChoices);
+
+            var categoryChoice = categoryChoiceMenu.MakeChoice();
+
+            ShowCategoryItems(categoryChoice.Key);            
+        }
+
+        private static void ShowCategoryItems(string categoryName)
+        {
+
         }
     }
 }
