@@ -44,7 +44,38 @@ namespace Cinecon
 
         private static void ShowCategoryItems(string categoryName)
         {
+            ConsoleHelper.WriteLogo(LogoType.Menu, ConsoleColor.Yellow);
 
+            ConsoleHelper.ColorWriteLine(categoryName, ConsoleColor.Yellow);
+
+            var itemChoices = new Dictionary<string, Action>();
+
+            var category = JsonHelper.Menu.FirstOrDefault(x => x.Name == categoryName);
+
+            foreach (var item in category.MenuItems)
+                itemChoices[item.Name] = null;
+
+            var itemChoiceMenu = new ChoiceMenu(itemChoices);
+
+            var itemChoice = itemChoiceMenu.MakeChoice();
+
+            ShowItemTypes(category, itemChoice.Key);
+        }
+
+        private static void ShowItemTypes(MenuCategory category, string item)
+        {
+            ConsoleHelper.WriteLogo(LogoType.Menu, ConsoleColor.Yellow);
+
+            ConsoleHelper.ColorWriteLine($"{category.Name}\n\n{item}", ConsoleColor.Yellow);
+
+            var typeChoices = new Dictionary<string, Action>();
+
+            foreach (var type in category.MenuItems.FirstOrDefault(x => x.Name == item).ItemTypes)
+                typeChoices[$"{type.Key} - {type.Value:0.00} euro"] = null;
+
+            var typeChoiceMenu = new ChoiceMenu(typeChoices);
+
+            var typeChoice = typeChoiceMenu.MakeChoice();
         }
     }
 }
