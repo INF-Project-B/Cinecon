@@ -4,6 +4,8 @@ namespace Cinecon
 {
     public class ConsoleHelper
     {
+        public static LogoType LogoType { get; set; } = LogoType.Cinecon;
+
         public static void ColorWriteLine(string text, ConsoleColor color)
         {
             var currentColor = Console.ForegroundColor;
@@ -12,9 +14,9 @@ namespace Cinecon
             Console.ForegroundColor = currentColor;
         }
 
-        public static void WriteLogo(LogoType logoType, ConsoleColor color = ConsoleColor.White)
+        public static void WriteLogo(ConsoleColor color = ConsoleColor.White)
         {
-            string text = logoType switch
+            string text = LogoType switch
             {
                 LogoType.Cinecon => @"   ____ _                            
   / ___(_)_ __   ___  ___ ___  _ __  
@@ -49,7 +51,7 @@ namespace Cinecon
                 _ => ""
             };
 
-            ColorWriteLine(text, color);
+            ColorWriteLine(text + "\n_______________________________________\n", color);
         }        
     }
 
