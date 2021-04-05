@@ -1,0 +1,109 @@
+﻿{
+    "popcorn": {
+        "salty": {
+            "small": 3.50,
+            "medium": 4.50,
+            "large": 5.00
+        }
+    },
+
+    "chips": {
+        "lays": {
+            "naturel": 2.50,
+            "paprika": 2.50
+        },
+        "doritos": {
+            "chili": 2.50,
+            "cheese": 2.50
+        }
+    },
+    "drinks": {
+        "cola": {
+            "small": 2.50,
+            "medium": 3.50,
+            "large": 4.00
+        },
+        "fanta": {
+            "small": 2.50,
+            "medium": 3.50,
+            "large": 4.00
+        },
+        "sprite": {
+            "small": 2.50,
+            "medium": 3.50,
+            "large": 4.00
+        },
+        "fristi": {
+            "medium": 3.00
+        },
+        "chocolatemilk": {
+            "medium": 3.00
+        },
+        "redbull": {
+            "medium": 4.00,
+            "large": 6.00
+        }
+    },
+    "chocolate": {
+        "mars": {
+            "bar": 2.00,
+            "mini's": 4.00
+        },
+        "twix": {
+            "bar": 2.00,
+            "mini's": 4.00
+        },
+        "snickers": {
+            "bar": 2.00,
+            "mini's": 4.00
+        },
+        "oreo's": {
+            "cookies": 3.00,
+            "mini's": 4.50
+        },
+        "kitkat": {
+            "bar": 2.50,
+            "mini's": 4.00
+        },
+        "m&m's": {
+            "small": 3.00,
+            "large": 5.00
+        },
+        "tony's": {
+            "seasalt": 4.50,
+            "milk": 4.00,
+            "pure": 4.00
+        },
+        "maltesers": {
+            "medium": 3.50
+        }
+    },
+    "candy": {
+        "skittles": {
+            "small": 2.00,
+            "medium": 4.00
+        },
+        "haribo": {
+            "small": 2.00,
+            "large": 5.00
+        },
+        "redband": {
+            "winegums": 3.50,
+            "mix": 4.00
+        },
+        "napoleon": {
+            "medium": 4.00
+        }
+    },
+    "warm": {
+        "nacho's": {
+            "small": 3.50,
+            "large": 5.50
+        },
+        "chicken_nuggets": {
+            "6pcs": 3.00,
+            "9pcs": 5.50,
+            "15pcs": 8.00
+        }
+    }
+}
