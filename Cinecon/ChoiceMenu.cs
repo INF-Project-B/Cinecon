@@ -52,9 +52,7 @@ namespace Cinecon
                     }
 
                     if (keyInfo.Key == ConsoleKey.Backspace && _choices.Any(x => x.Key == "Terug"))
-                    {
                         return _choices.FirstOrDefault(x => x.Key == "Terug");
-                    }    
                 }
 
                 lastPressedTime = DateTime.Now;
