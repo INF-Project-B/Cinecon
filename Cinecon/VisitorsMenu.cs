@@ -31,10 +31,13 @@ namespace Cinecon
             var movies = new Dictionary<string, Action>();
 
             foreach (var movie in JsonHelper.Movies)
+                movies[movie.Title] = null;
 
             var movieMenu = new ChoiceMenu(movies, true);
 
+            var movieChoice = movieMenu.MakeChoice();
 
+            if (movieChoice.Key == "Terug")
                 ShowVisitorMenu();
             else
             {
