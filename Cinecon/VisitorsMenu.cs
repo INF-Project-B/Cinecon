@@ -32,6 +32,7 @@ namespace Cinecon
         private static void ShowMenu()
         {
             ConsoleHelper.LogoType = LogoType.Menu;
+            ConsoleHelper.Breadcrumb = null;
 
             var categoryChoices = new Dictionary<string, Action>();
 
@@ -52,7 +53,7 @@ namespace Cinecon
         {
             ConsoleHelper.LogoType = LogoType.Menu;
 
-            ConsoleHelper.ColorWriteLine($"Categorie: {category.Name}", ConsoleColor.Red);
+            ConsoleHelper.Breadcrumb = $"  Categorie: {category.Name}\n";
 
             var itemChoices = new Dictionary<string, Action>();
 
@@ -73,7 +74,7 @@ namespace Cinecon
         {
             ConsoleHelper.LogoType = LogoType.Menu;
 
-            ConsoleHelper.ColorWriteLine($"Categorie: {category.Name}\nProduct: {item}", ConsoleColor.Red);
+            ConsoleHelper.Breadcrumb += $"  Product: {item}\n";
 
             var typeChoices = new Dictionary<string, Action>();
 

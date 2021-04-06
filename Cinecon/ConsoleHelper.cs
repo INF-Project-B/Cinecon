@@ -5,6 +5,7 @@ namespace Cinecon
     public class ConsoleHelper
     {
         public static LogoType LogoType { get; set; } = LogoType.Cinecon;
+        public static string Breadcrumb { get; set; }
 
         public static void ColorWriteLine(string text, ConsoleColor color)
         {
@@ -12,6 +13,12 @@ namespace Cinecon
             Console.ForegroundColor = color;
             Console.WriteLine(text);
             Console.ForegroundColor = currentColor;
+        }
+
+        public static void WriteBreadcrumb()
+        {
+            if (!string.IsNullOrEmpty(Breadcrumb))
+                ColorWriteLine(Breadcrumb, ConsoleColor.Yellow);
         }
 
         public static void WriteLogo(ConsoleColor color = ConsoleColor.White)

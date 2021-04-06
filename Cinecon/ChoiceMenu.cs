@@ -63,6 +63,7 @@ namespace Cinecon
         {
             Console.Clear();
             ConsoleHelper.WriteLogo(ConsoleColor.Red);
+            ConsoleHelper.WriteBreadcrumb();
 
             if (ConsoleHelper.LogoType == LogoType.Cinecon)
                 ConsoleHelper.ColorWriteLine("  Welkom bij Cinecon!\n  Bent u een medewerker of bezoeker?\n", ConsoleColor.Yellow);
