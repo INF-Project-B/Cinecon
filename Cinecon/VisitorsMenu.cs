@@ -27,6 +27,19 @@ namespace Cinecon
         private static void ShowFilms()
         {
             ConsoleHelper.LogoType = LogoType.Films;
+
+            var movies = new Dictionary<string, Action>();
+
+            foreach (var movie in JsonHelper.Movies)
+
+            var movieMenu = new ChoiceMenu(movies, true);
+
+
+                ShowVisitorMenu();
+            else
+            {
+
+            }
         }
 
         private static void ShowMenu()
