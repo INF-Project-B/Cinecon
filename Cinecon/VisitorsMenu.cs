@@ -14,7 +14,7 @@ namespace Cinecon
             {
                 { "Films", ShowFilms },
                 { "Menu", ShowMenu }
-            }, true);
+            }, addBackChoice: true);
 
             var visitorsMenuChoice = visitorsMenu.MakeChoice();
 
