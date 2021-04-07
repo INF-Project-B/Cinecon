@@ -41,7 +41,7 @@ namespace Cinecon
                 ShowVisitorMenu();
             else
             {
-
+                // Show movie information.
             }
         }
 
