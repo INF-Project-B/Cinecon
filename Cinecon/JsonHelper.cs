@@ -69,7 +69,7 @@ namespace Cinecon
     public class MenuItem
     {
         public string Name { get; set; }
-        // The keys are the size/product types. The values are the prices.
+        // The key is the size/product type. The value is the price.
         public Dictionary<string, double> ItemTypes { get; set; }
     }
 }
