@@ -12,7 +12,7 @@ namespace Cinecon
 
             var visitorsMenu = new ChoiceMenu(new Dictionary<string, Action>
             {
-                { "Films", ShowFilms },
+                { "Films", null },
                 { "Menu", ShowMenu }
             }, addBackChoice: true);
 
@@ -20,18 +20,29 @@ namespace Cinecon
 
             if (visitorsMenuChoice.Key == "Terug")
                 Program.StartChoice();
+            else if (visitorsMenuChoice.Key == "Films")
+                ShowFilms();
             else
                 visitorsMenuChoice.Value();
         }
 
-        private static void ShowFilms()
+        private static void ShowFilms(List<KeyValuePair<string, Action>> genres = null)
         {
             ConsoleHelper.LogoType = LogoType.Films;
+            ConsoleHelper.Breadcrumb = "Filters: ";
+
+            ConsoleHelper.Breadcrumb += genres?.Count > 0 ? string.Join(", ", genres.Select(x => x.Key)) + "\n" : "Geen\n";
 
             var movies = new Dictionary<string, Action>();
 
             foreach (var movie in JsonHelper.Movies)
+            {
+                if (genres?.Count > 0 && movie.Genres.Intersect(genres.Select(x => x.Key)).Count() == 0)
+                    continue;
                 movies[movie.Title] = null;
+            }
+
+            movies["Filters"] = null;
 
             var movieMenu = new ChoiceMenu(movies, true);
 
@@ -39,10 +50,29 @@ namespace Cinecon
 
             if (movieChoice.Key == "Terug")
                 ShowVisitorMenu();
+            else if (movieChoice.Key == "Filters")
+                ShowGenres(genres);
             else
             {
                 // Show movie information.
             }
+        }
+
+        private static void ShowGenres(List<KeyValuePair<string, Action>> genres)
+        {
+            ConsoleHelper.LogoType = LogoType.Films;
+            ConsoleHelper.Breadcrumb = "Films / Filters\n";
+
+            var genreChoices = new Dictionary<string, Action>();
+
+            foreach (var genre in JsonHelper.Genres)
+                genreChoices[genre] = null;
+
+            var genreChoiceMenu = new ChoiceMenu(genreChoices, true);
+
+            var selectedGenres = genreChoiceMenu.MakeMultipleChoice(genres);
+
+            ShowFilms(selectedGenres);
         }
 
         private static void ShowMenu()
