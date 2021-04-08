@@ -120,7 +120,7 @@ namespace Cinecon
         {
             ConsoleHelper.LogoType = LogoType.Menu;
 
-            ConsoleHelper.Breadcrumb += $"Product: {item}\n";
+            ConsoleHelper.Breadcrumb += $"  Product: {item}\n";
 
             var typeChoices = new Dictionary<string, Action>();
 
