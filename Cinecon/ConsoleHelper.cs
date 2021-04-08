@@ -18,7 +18,7 @@ namespace Cinecon
         public static void WriteBreadcrumb()
         {
             if (!string.IsNullOrEmpty(Breadcrumb))
-                ColorWriteLine(Breadcrumb, ConsoleColor.Yellow);
+                ColorWriteLine($"  {Breadcrumb}", ConsoleColor.Yellow);
         }
 
         public static void WriteLogo(ConsoleColor color = ConsoleColor.White)
