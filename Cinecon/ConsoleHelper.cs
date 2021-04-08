@@ -15,6 +15,14 @@ namespace Cinecon
             Console.ForegroundColor = currentColor;
         }
 
+        public static void ColorWrite(string text, ConsoleColor color)
+        {
+            var currentColor = Console.ForegroundColor;
+            Console.ForegroundColor = color;
+            Console.Write(text);
+            Console.ForegroundColor = currentColor;
+        }
+
         public static void WriteBreadcrumb()
         {
             if (!string.IsNullOrEmpty(Breadcrumb))
