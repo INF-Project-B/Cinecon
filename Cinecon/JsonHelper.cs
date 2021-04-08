@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
@@ -8,16 +9,29 @@ namespace Cinecon
     public class JsonHelper
     {
         public static List<Movie> Movies { get; set; }
+        public static List<string> Genres { get; set; }
         public static List<MenuCategory> Menu { get; set; }
 
         public static void LoadJson()
         {
             AddMovies();
+            AddGenres();
             AddMenu();
         }
 
         private static void AddMovies()
             => Movies = JsonConvert.DeserializeObject<List<Movie>>(File.ReadAllText("Assets/movies.json"));
+
+        private static void AddGenres()
+        {
+            var genres = new List<string>();
+
+            foreach (var genreList in Movies.Select(x => x.Genres))
+                foreach (var genre in genreList)
+                    genres.Add(genre);
+
+            Genres = genres.Distinct().ToList();
+        }
 
         private static void AddMenu()
         {
