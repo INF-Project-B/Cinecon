@@ -63,7 +63,7 @@ namespace Cinecon
             }
         }
 
-        public List<KeyValuePair<string, Action>> MakeMultipleChoice(List<KeyValuePair<string, Action>> preselectedGenres)
+        public List<KeyValuePair<string, Action>> MakeMultipleChoice(List<KeyValuePair<string, Action>> preselectedGenres = null)
         {
             ChoiceSetup(preselectedGenres);
 
