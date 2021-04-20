@@ -6,7 +6,7 @@ using Newtonsoft.Json.Linq;
 
 namespace Cinecon
 {
-    public class JsonHelper
+    public static class JsonHelper
     {
         public static List<Movie> Movies { get; set; }
         public static List<string> Genres { get; set; }
