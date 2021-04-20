@@ -28,38 +28,31 @@ namespace Cinecon
 
             int index = 0;
 
-            ConsoleKeyInfo keyInfo;
-            var lastPressedTime = DateTime.Now;
-
             while (true)
             {
-                keyInfo = Console.ReadKey(true);
+                Console.CursorTop = 0;
 
-                if (DateTime.Now > lastPressedTime.AddMilliseconds(50))
+                switch (Console.ReadKey(true).Key)
                 {
-                    if (keyInfo.Key == ConsoleKey.DownArrow)
-                    {
+                    case ConsoleKey.DownArrow:
                         index = index + 1 < _choices.Count ? index + 1 : 0;
                         WriteMenu(index);
-                    }
-
-                    if (keyInfo.Key == ConsoleKey.UpArrow)
-                    {
+                        break;
+                    case ConsoleKey.UpArrow:
                         index = index - 1 >= 0 ? index - 1 : _choices.Count - 1;
                         WriteMenu(index);
-                    }
-
-                    if (keyInfo.Key == ConsoleKey.Enter)
-                    {
+                        break;
+                    case ConsoleKey.Enter:
                         Console.Clear();
                         return _choices[index];
-                    }
-
-                    if (keyInfo.Key == ConsoleKey.Backspace && _choices.Any(x => x.Key == "Terug"))
-                        return _choices.FirstOrDefault(x => x.Key == "Terug");
+                    case ConsoleKey.Backspace:
+                        if (_choices.Any(x => x.Key == "Terug"))
+                        {
+                            Console.Clear();
+                            return _choices.FirstOrDefault(x => x.Key == "Terug");
+                        }
+                        break;
                 }
-
-                lastPressedTime = DateTime.Now;
             }
         }
 
@@ -71,61 +64,52 @@ namespace Cinecon
 
             var choices = preselectedGenres ?? new List<KeyValuePair<string, Action>>();
 
-            ConsoleKeyInfo keyInfo;
-            var lastPressedTime = DateTime.Now;
-
             while (true)
             {
-                keyInfo = Console.ReadKey(true);
+                Console.CursorTop = 0;
 
-                if (DateTime.Now > lastPressedTime.AddMilliseconds(50))
+                switch (Console.ReadKey(true).Key)
                 {
-                    if (keyInfo.Key == ConsoleKey.DownArrow)
-                    {
+                    case ConsoleKey.DownArrow:
                         index = index + 1 < _choices.Count ? index + 1 : 0;
                         WriteMenu(index, choices);
-                    }
-
-                    if (keyInfo.Key == ConsoleKey.UpArrow)
-                    {
+                        break;
+                    case ConsoleKey.UpArrow:
                         index = index - 1 >= 0 ? index - 1 : _choices.Count - 1;
                         WriteMenu(index, choices);
-                    }
-
-                    if (keyInfo.Key == ConsoleKey.Enter)
-                    {
-                        Console.Clear();
-
+                        break;
+                    case ConsoleKey.Enter:
                         var choice = _choices[index];
-
                         if (new[] { "Terug", "Ga door" }.Any(x => x == choice.Key))
+                        {
+                            Console.Clear();
                             return choices;
-
+                        }
                         if (!choices.Contains(choice))
                             choices.Add(choice);
                         else
                             choices.Remove(choice);
-
                         WriteMenu(index, choices);
-                    }
-
-                    if (keyInfo.Key == ConsoleKey.Backspace && _choices.Any(x => x.Key == "Terug" || x.Key == "Ga door"))
-                        return choices;
+                        break;
+                    case ConsoleKey.Backspace:
+                        if (_choices.Any(x => x.Key == "Terug" || x.Key == "Ga door"))
+                        {
+                            Console.Clear();
+                            return choices;
+                        }
+                        break;
                 }
-
-                lastPressedTime = DateTime.Now;
             }
         }
 
         private void WriteMenu(int index, List<KeyValuePair<string, Action>> selectedChoices = null)
         {
-            Console.Clear();
             ConsoleHelper.WriteLogo(ConsoleColor.Red);
             ConsoleHelper.WriteBreadcrumb();
 
             if (ConsoleHelper.LogoType == LogoType.Cinecon)
                 ConsoleHelper.ColorWriteLine("  Welkom bij Cinecon!\n  Bent u een medewerker of bezoeker?\n", ConsoleColor.Yellow);
-
+            
             foreach (var choice in _choices)
             {
                 if (new[] { "Terug", "Exit", "Filters" }.Any(x => x == choice.Key))
@@ -146,13 +130,13 @@ namespace Cinecon
                 else
                 {
                     if (choice.Key == "Filters")
-                        ConsoleHelper.ColorWriteLine($"  {choice.Key}", ConsoleColor.Yellow);
+                        ConsoleHelper.ColorWriteLine($"   {choice.Key}", ConsoleColor.Yellow);
                     else
                     {
                         if (choiceIsSelected)
-                            ConsoleHelper.ColorWriteLine($"  {choice.Key}", ConsoleColor.Green);
+                            ConsoleHelper.ColorWriteLine($"   {choice.Key}", ConsoleColor.Green);
                         else
-                            Console.WriteLine($"  {choice.Key}");
+                            Console.WriteLine($"   {choice.Key}");
                     }
                 }
             }
