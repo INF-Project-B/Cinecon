@@ -98,7 +98,6 @@ namespace Cinecon
         private static void ShowCategoryItems(MenuCategory category)
         {
             ConsoleHelper.LogoType = LogoType.Menu;
-
             ConsoleHelper.Breadcrumb = $"Categorie: {category.Name}\n";
 
             var itemChoices = new Dictionary<string, Action>();
@@ -119,7 +118,6 @@ namespace Cinecon
         private static void ShowItemTypes(MenuCategory category, string item)
         {
             ConsoleHelper.LogoType = LogoType.Menu;
-
             ConsoleHelper.Breadcrumb += $"  Product: {item}\n";
 
             var typeChoices = new Dictionary<string, Action>();
