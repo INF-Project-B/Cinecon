@@ -7,6 +7,8 @@ namespace Cinecon
     {
         private static void Main()
         {
+            Console.Clear();
+
             JsonHelper.LoadJson();
 
             StartChoice();
