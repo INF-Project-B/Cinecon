@@ -7,13 +7,17 @@ namespace Cinecon
     public class ChoiceMenu
     {
         private readonly List<KeyValuePair<string, Action>> _choices;
+        private string _text;
+        private ConsoleColor _textColor;
 
-        public ChoiceMenu(Dictionary<string, Action> choices, bool addBackChoice = false)
+        public ChoiceMenu(Dictionary<string, Action> choices, bool addBackChoice = false, string text = null, ConsoleColor textColor = ConsoleColor.White)
         {
             if (addBackChoice)
                 choices["Terug"] = null;
 
             _choices = choices.ToList();
+            _text = text;
+            _textColor = textColor;
         }
 
         private void ChoiceSetup(List<KeyValuePair<string, Action>> preselected = null)
@@ -109,6 +113,9 @@ namespace Cinecon
 
             if (ConsoleHelper.LogoType == LogoType.Cinecon)
                 ConsoleHelper.ColorWriteLine("  Welkom bij Cinecon!\n  Bent u een medewerker of bezoeker?\n", ConsoleColor.Yellow);
+
+            if (!string.IsNullOrEmpty(_text))
+                ConsoleHelper.ColorWriteLine(_text, _textColor);
             
             foreach (var choice in _choices)
             {
