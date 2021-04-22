@@ -7,8 +7,8 @@ namespace Cinecon
     public class ChoiceMenu
     {
         private readonly List<KeyValuePair<string, Action>> _choices;
+        private readonly string _text;
         private readonly ConsoleColor _textColor;
-        private string _text;
 
         public ChoiceMenu(Dictionary<string, Action> choices, bool addBackChoice = false, string text = null, ConsoleColor textColor = ConsoleColor.White)
         {
