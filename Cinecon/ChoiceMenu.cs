@@ -8,7 +8,7 @@ namespace Cinecon
     {
         private readonly List<KeyValuePair<string, Action>> _choices;
 
-        public ChoiceMenu(Dictionary<string, Action> choices, bool addBackChoice = false)
+        public ChoiceMenu(Dictionary<string, Action> choices, bool addBackChoice = false, string text = null)
         {
             if (addBackChoice)
                 choices["Terug"] = null;
