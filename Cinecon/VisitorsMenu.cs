@@ -82,7 +82,7 @@ namespace Cinecon
 
             var filtersChoiceMenu = new ChoiceMenu(new Dictionary<string, Action>
             {
-                { "Genres", ShowGenres },
+                { "Genres", ShowGenresFilter },
                 { "Datum en tijd", null },
             }, addBackChoice: true);
 
@@ -94,7 +94,7 @@ namespace Cinecon
                 ShowFilms();
         }
 
-        private static void ShowGenres()
+        private static void ShowGenresFilter()
         {
             ConsoleHelper.LogoType = LogoType.Films;
             ConsoleHelper.Breadcrumb = "Films / Filters / Genres";
