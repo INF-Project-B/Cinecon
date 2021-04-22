@@ -60,7 +60,8 @@ namespace Cinecon
             }
             var backChoice = new ChoiceMenu(new Dictionary<string, Action>
             {
-                { "Activeer code", () => checkReservation.IsActivated = true}
+                { "Activeer code", () => checkReservation.IsActivated = true},
+                { "Deactiveer code", () => checkReservation.IsActivated = false}
             }, addBackChoice: true, reservationDescription, ConsoleColor.Yellow).MakeChoice();
 
 
