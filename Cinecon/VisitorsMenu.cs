@@ -6,6 +6,8 @@ namespace Cinecon
 {
     public class VisitorsMenu
     {
+        private static List<KeyValuePair<string, Action>> _genres;
+
         public static void ShowVisitorMenu()
         {
             ConsoleHelper.LogoType = LogoType.Visitor;
@@ -27,18 +29,16 @@ namespace Cinecon
                 visitorsMenuChoice.Value();
         }
 
-        private static void ShowFilms(List<KeyValuePair<string, Action>> genres = null)
+        private static void ShowFilms()
         {
             ConsoleHelper.LogoType = LogoType.Films;
-            ConsoleHelper.Breadcrumb = "Filters: ";
-
-            ConsoleHelper.Breadcrumb += genres?.Count > 0 ? string.Join(", ", genres.Select(x => x.Key)) : "Geen";
+            ConsoleHelper.Breadcrumb = $"Filters: {(_genres?.Count > 0 ? string.Join(", ", _genres.Select(x => x.Key)) : "Geen")}";
 
             var movies = new Dictionary<string, Action>();
 
             foreach (var movie in JsonHelper.Movies)
             {
-                if (genres?.Count > 0 && movie.Genres.Intersect(genres.Select(x => x.Key)).Count() == 0)
+                if (_genres?.Count > 0 && movie.Genres.Intersect(_genres.Select(x => x.Key)).Count() == 0)
                     continue;
                 movies[movie.Title] = null;
             }
