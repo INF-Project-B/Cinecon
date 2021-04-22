@@ -43,17 +43,17 @@ namespace Cinecon
                 movies[movie.Title] = null;
             }
 
-            movies["Filters"] = null;
+            movies["Filters"] = ShowFilters;
 
             var movieMenu = new ChoiceMenu(movies, true);
 
             var movieChoice = movieMenu.MakeChoice();
 
+            movieChoice.Value?.Invoke();
+
             if (movieChoice.Key == "Terug")
                 ShowVisitorMenu();
-            else if (movieChoice.Key == "Filters")
-                ShowGenres(genres);
-            else
+            else if (movieChoice.Value == null)
                 ShowFilmInfo(movieChoice.Key);
         }
 
@@ -75,10 +75,29 @@ namespace Cinecon
             // TODO: Add functionality for when the user makes a selection.
         }
 
-        private static void ShowGenres(List<KeyValuePair<string, Action>> genres)
+        private static void ShowFilters()
         {
             ConsoleHelper.LogoType = LogoType.Films;
             ConsoleHelper.Breadcrumb = "Films / Filters";
+
+            var filtersChoiceMenu = new ChoiceMenu(new Dictionary<string, Action>
+            {
+                { "Genres", ShowGenres },
+                { "Datum en tijd", null },
+            }, addBackChoice: true);
+
+            var filtersChoice = filtersChoiceMenu.MakeChoice();
+
+            filtersChoice.Value?.Invoke();
+
+            if (filtersChoice.Key == "Terug")
+                ShowFilms();
+        }
+
+        private static void ShowGenres()
+        {
+            ConsoleHelper.LogoType = LogoType.Films;
+            ConsoleHelper.Breadcrumb = "Films / Filters / Genres";
 
             var genreChoices = new Dictionary<string, Action>();
 
@@ -87,9 +106,9 @@ namespace Cinecon
 
             var genreChoiceMenu = new ChoiceMenu(genreChoices, true);
 
-            var selectedGenres = genreChoiceMenu.MakeMultipleChoice(genres);
+            _genres = genreChoiceMenu.MakeMultipleChoice(_genres);
 
-            ShowFilms(selectedGenres);
+            ShowFilters();
         }
 
         private static void ShowMenu()
