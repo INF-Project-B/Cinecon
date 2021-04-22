@@ -23,7 +23,9 @@ namespace Cinecon
                 { "Bezoeker", VisitorsMenu.ShowVisitorMenu },
                 { "Medewerker", () => { ConsoleHelper.LogoType = LogoType.Employee; ConsoleHelper.WriteLogo(ConsoleColor.Red); } },
                 { "Exit", () => Environment.Exit(0) },
-            });
+            }, 
+            text: "   Welkom bij Cinecon!\n   Bent u een medewerker of bezoeker?\n",
+            textColor: ConsoleColor.Yellow);
 
             var choice = choiceMenu.MakeChoice();
 
