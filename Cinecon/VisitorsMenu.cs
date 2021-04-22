@@ -70,7 +70,6 @@ namespace Cinecon
                 { "Koop tickets", null },
             }, addBackChoice: true, text);
 
-
             var filmChoice = filmChoiceMenu.MakeChoice();
             // TODO: Add functionality for when the user makes a selection.
         }
