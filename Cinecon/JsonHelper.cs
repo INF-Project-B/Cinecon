@@ -75,7 +75,8 @@ namespace Cinecon
         public string Description { get; set; }
         public string[] Genres { get; set; }
         public int Room { get; set; }
-        public string[] Hours { get; set; }
+        // The key is the day. The value is an array of the times.
+        public Dictionary<string, string[]> Days { get; set; }
         public bool BringId { get; set; }
     }
 
