@@ -9,6 +9,7 @@ namespace Cinecon
         public static void ShowVisitorMenu()
         {
             ConsoleHelper.LogoType = LogoType.Visitor;
+            ConsoleHelper.Breadcrumb = null;
 
             var visitorsMenu = new ChoiceMenu(new Dictionary<string, Action>
             {
