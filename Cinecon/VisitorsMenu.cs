@@ -53,9 +53,25 @@ namespace Cinecon
             else if (movieChoice.Key == "Filters")
                 ShowGenres(genres);
             else
+                ShowFilmInfo(movieChoice.Key);
+        }
+
+        private static void ShowFilmInfo(string movieName)
+        {
+            ConsoleHelper.LogoType = LogoType.Films;
+            ConsoleHelper.Breadcrumb = $"Films / {movieName}\n";
+            
+            var movie = JsonHelper.Movies.FirstOrDefault(x => x.Title == movieName);
+
+            var text = $"Titel: {movie.Title}\n\nOmschrijving: { movie.Description}\n\nZaal: {movie.Room}\n\n_______________________________________\n";       
+
+            var filmChoiceMenu = new ChoiceMenu(new Dictionary<string, Action>
             {
-                // Show movie information.
-            }
+                { "Koop tickets", null },
+            }, addBackChoice: true, text);
+
+            var filmChoice = filmChoiceMenu.MakeChoice();
+            // TODO: Add functionality for when the user makes a selection.
         }
 
         private static void ShowGenres(List<KeyValuePair<string, Action>> genres)
