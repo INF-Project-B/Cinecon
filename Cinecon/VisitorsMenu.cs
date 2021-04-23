@@ -9,6 +9,7 @@ namespace Cinecon
         public static void ShowVisitorMenu()
         {
             ConsoleHelper.LogoType = LogoType.Visitor;
+            ConsoleHelper.Breadcrumb = null;
 
             var visitorsMenu = new ChoiceMenu(new Dictionary<string, Action>
             {
@@ -31,7 +32,7 @@ namespace Cinecon
             ConsoleHelper.LogoType = LogoType.Films;
             ConsoleHelper.Breadcrumb = "Filters: ";
 
-            ConsoleHelper.Breadcrumb += genres?.Count > 0 ? string.Join(", ", genres.Select(x => x.Key)) + "\n" : "Geen\n";
+            ConsoleHelper.Breadcrumb += genres?.Count > 0 ? string.Join(", ", genres.Select(x => x.Key)) : "Geen";
 
             var movies = new Dictionary<string, Action>();
 
@@ -59,7 +60,7 @@ namespace Cinecon
         private static void ShowFilmInfo(string movieName)
         {
             ConsoleHelper.LogoType = LogoType.Films;
-            ConsoleHelper.Breadcrumb = $"Films / {movieName}\n";
+            ConsoleHelper.Breadcrumb = $"Films / {movieName}";
             
             var movie = JsonHelper.Movies.FirstOrDefault(x => x.Title == movieName);
 
@@ -77,7 +78,7 @@ namespace Cinecon
         private static void ShowGenres(List<KeyValuePair<string, Action>> genres)
         {
             ConsoleHelper.LogoType = LogoType.Films;
-            ConsoleHelper.Breadcrumb = "Films / Filters\n";
+            ConsoleHelper.Breadcrumb = "Films / Filters";
 
             var genreChoices = new Dictionary<string, Action>();
 
@@ -114,8 +115,7 @@ namespace Cinecon
         private static void ShowCategoryItems(MenuCategory category)
         {
             ConsoleHelper.LogoType = LogoType.Menu;
-
-            ConsoleHelper.Breadcrumb = $"Categorie: {category.Name}\n";
+            ConsoleHelper.Breadcrumb = $"Categorie: {category.Name}";
 
             var itemChoices = new Dictionary<string, Action>();
 
@@ -135,8 +135,7 @@ namespace Cinecon
         private static void ShowItemTypes(MenuCategory category, string item)
         {
             ConsoleHelper.LogoType = LogoType.Menu;
-
-            ConsoleHelper.Breadcrumb += $"  Product: {item}\n";
+            ConsoleHelper.Breadcrumb += $"Product: {item}";
 
             var typeChoices = new Dictionary<string, Action>();
 
