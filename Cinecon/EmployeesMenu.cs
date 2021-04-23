@@ -23,53 +23,38 @@ namespace Cinecon
                 employeesMenuChoice.Value();
         }
 
-        public static void ShowReservations()
+        private static void ShowReservations()
         {
-
-            var reservationsCode = new Dictionary<string, Action>();
-
-            var realReservations = new Dictionary<string, Reservation>();
+            var reservationCodes = new Dictionary<string, Action>();
             
             foreach (var reservations in JsonHelper.Reservations)
-            {
-                reservationsCode[reservations.Code] = null;
-                realReservations[reservations.Code] = reservations;
-            }
+                reservationCodes[reservations.Code] = null;
 
-            var reservationsCodeChoice = new ChoiceMenu(reservationsCode, addBackChoice: true).MakeChoice().Key;
+            var reservationsCodeChoice = new ChoiceMenu(reservationCodes, addBackChoice: true).MakeChoice();
 
-            if (reservationsCodeChoice == "Terug")
+            if (reservationsCodeChoice.Key == "Terug")
                 ShowEmployeesMenu();
-            else;
-                ShowCodeInfo(realReservations[reservationsCodeChoice]);
+            else
+                ShowCodeInfo(JsonHelper.Reservations.FirstOrDefault(x => x.Code == reservationsCodeChoice.Key));
         }
 
-        public static void ShowCodeInfo(Reservation checkReservation)
+        private static void ShowCodeInfo(Reservation reservation)
         {
-            var isActivated = checkReservation.IsActivated ? $"Code {checkReservation.Code} is actief" : $"Code {checkReservation.Code} is inactief";
+            var reservationDescription = $"   Code {reservation.Code} is {(reservation.IsActivated ? "actief" : "inactief")}\n" +
+                $"   Er is betaald met {reservation.PaymentMethod}.\n   {(reservation.Seats.Count > 1 ? "Stoelen: " : "Stoel: ")}" +
+                string.Join(", ", reservation.Seats.Select(x => $"{x.Row}{x.Number}")) + ".\n";
 
-            var length = checkReservation.Seats.Count > 1 ? "Stoelen " : "stoel ";
-
-            var reservationDescription = $"  {isActivated}\n  Er is betaald met {checkReservation.PaymentMethod}\n  {length}";
-
-            for (int i = 0;i < checkReservation.Seats.Count;i++)
-            {
-                reservationDescription += $"{checkReservation.Seats[i].Row}{checkReservation.Seats[i].Number}";
-
-                reservationDescription += i < checkReservation.Seats.Count - 1 ? ", " : "\n";
-            }
             var backChoice = new ChoiceMenu(new Dictionary<string, Action>
             {
-                { "Activeer code", () => checkReservation.IsActivated = true}
+                { "Activeer code", () => reservation.IsActivated = true}
             }, addBackChoice: true, reservationDescription, ConsoleColor.Yellow).MakeChoice();
-
 
             if (backChoice.Key == "Terug")
                 ShowReservations();
             else
             {
                 backChoice.Value();
-                ShowReservations();
+                ShowCodeInfo(reservation);
             }
         }
     }
