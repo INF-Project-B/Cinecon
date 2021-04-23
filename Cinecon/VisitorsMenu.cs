@@ -7,6 +7,7 @@ namespace Cinecon
     public class VisitorsMenu
     {
         private static List<KeyValuePair<string, Action>> _genres;
+        private static KeyValuePair<string, string[]> _dayAndTimes;
 
         public static void ShowVisitorMenu()
         {
@@ -32,13 +33,16 @@ namespace Cinecon
         private static void ShowFilms()
         {
             ConsoleHelper.LogoType = LogoType.Films;
-            ConsoleHelper.Breadcrumb = $"Filters: {(_genres?.Count > 0 ? string.Join(", ", _genres.Select(x => x.Key)) : "Geen")}";
+            ConsoleHelper.Breadcrumb = $"Genres: {(_genres?.Count > 0 ? string.Join(", ", _genres.Select(x => x.Key)) : "Alle")}\n" +
+                $"   Tijden: {(_dayAndTimes.Key != null && _dayAndTimes.Value.Length > 0 ? $"{_dayAndTimes.Key} om {string.Join(", ", _dayAndTimes.Value)}" : "Alle") }";
 
             var movies = new Dictionary<string, Action>();
 
             foreach (var movie in JsonHelper.Movies)
             {
                 if (_genres?.Count > 0 && movie.Genres.Intersect(_genres.Select(x => x.Key)).Count() == 0)
+                    continue;
+                if (_dayAndTimes.Key != null && _dayAndTimes.Value.Length > 0 && !movie.Days[_dayAndTimes.Key.ToLower()].Intersect(_dayAndTimes.Value).Any())
                     continue;
                 movies[movie.Title] = null;
             }
@@ -83,7 +87,8 @@ namespace Cinecon
             var filtersChoiceMenu = new ChoiceMenu(new Dictionary<string, Action>
             {
                 { "Genres", ShowGenresFilter },
-                { "Datum en tijd", null },
+                { "Dag en tijden", ShowDaysFilter },
+                { "Reset filters", () => { _genres = null; _dayAndTimes = new KeyValuePair<string, string[]>(); } },
             }, addBackChoice: true);
 
             var filtersChoice = filtersChoiceMenu.MakeChoice();
@@ -92,6 +97,57 @@ namespace Cinecon
 
             if (filtersChoice.Key == "Terug")
                 ShowFilms();
+            else if (filtersChoice.Key == "Reset filters")
+                ShowFilters();
+        }
+
+        private static void ShowDaysFilter()
+        {
+            ConsoleHelper.LogoType = LogoType.Films;
+            ConsoleHelper.Breadcrumb = "Films / Filters / Dag en tijden";
+
+            var dayOptions = new Dictionary<string, Action>();
+            
+            foreach (var day in new[] { "Maandag", "Dinsdag", "Woensdag", "Donderdag", "Vrijdag", "Zaterdag", "Zondag" })
+                dayOptions[day] = null;
+
+            var dayChoiceMenu = new ChoiceMenu(dayOptions, true);
+
+            var dayChoice = dayChoiceMenu.MakeChoice();
+
+            if (dayChoice.Key == "Terug")
+                ShowFilters();
+            else
+                ShowTimes(dayChoice.Key);
+
+            static void ShowTimes(string day)
+            {
+                ConsoleHelper.Breadcrumb += $" / {day}";
+
+                var timeOptions = new Dictionary<string, Action>();
+
+                foreach (var movie in JsonHelper.Movies)
+                    foreach (var time in movie.Days[day.ToLower()])
+                        timeOptions[time] = null;
+
+                var text = timeOptions.Count > 0 ? "" : "   Geen tijden gevonden.";
+
+                var timeChoiceMenu = new ChoiceMenu(timeOptions, true, text);
+
+                var dayAndTimes = new Dictionary<string, Action>();
+                if (_dayAndTimes.Value != null && _dayAndTimes.Key == day)
+                {
+                    foreach (var time in _dayAndTimes.Value)
+                        dayAndTimes[time] = null;
+                }
+
+                var timeChoices = timeChoiceMenu.MakeMultipleChoice(dayAndTimes.ToList());
+
+                if (timeChoices.Count > 0 || _dayAndTimes.Key == day)
+                    _dayAndTimes = new KeyValuePair<string, string[]>(day, timeChoices.Select(x => x.Key).ToArray());
+
+                ShowDaysFilter();
+            }
         }
 
         private static void ShowGenresFilter()
