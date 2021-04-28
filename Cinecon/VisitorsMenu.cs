@@ -76,7 +76,9 @@ namespace Cinecon
             }, addBackChoice: true, text);
 
             var filmChoice = filmChoiceMenu.MakeChoice();
-            // TODO: Add functionality for when the user makes a selection.
+
+            if (filmChoice.Key == "Terug")
+                ShowFilms();
         }
 
         private static void ShowFilters()
