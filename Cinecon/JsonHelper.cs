@@ -65,8 +65,7 @@ namespace Cinecon
         }
 
         private static void AddReservations()
-            => Reservations = JsonConvert.DeserializeObject<List<Reservation>>(File.ReadAllText("Assets/reservation.json"));
-    }    
+            => Reservations = JsonConvert.DeserializeObject<List<Reservation>>(File.ReadAllText("Assets/reservations.json"));
     
     public class Movie
     {

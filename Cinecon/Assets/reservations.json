@@ -34,7 +34,7 @@
         "seats": [
             {
                 "row": "A",
-                "number": 3,
+                "number": 3
             }
         ],
         "total_price": 10.0
