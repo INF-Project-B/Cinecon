@@ -46,8 +46,7 @@ namespace Cinecon
 
             var backChoice = new ChoiceMenu(new Dictionary<string, Action>
             {
-                { "Activeer code", () => reservation.IsActivated = true},
-                { "Deactiveer code", () => reservation.IsActivated = false}
+                { reservation.IsActivated ? "Deactiveer code" : "Activeer code", () => reservation.IsActivated = !reservation.IsActivated }
             }, addBackChoice: true, reservationDescription, ConsoleColor.Yellow).MakeChoice();
 
             if (backChoice.Key == "Terug")
