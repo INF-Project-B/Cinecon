@@ -7,6 +7,10 @@
             {
                 "row": "A",
                 "number": 1
+            },
+            {
+                "row": "B",
+                "number": 8
             }
         ],
         "total_price": 20.0
