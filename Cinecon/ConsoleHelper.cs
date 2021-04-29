@@ -2,7 +2,7 @@
 
 namespace Cinecon
 {
-    public class ConsoleHelper
+    public static class ConsoleHelper
     {
         public static LogoType LogoType { get; set; } = LogoType.Cinecon;
         public static string Breadcrumb { get; set; }

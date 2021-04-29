@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Cinecon
 {
-    public class EmployeesMenu
+    public static class EmployeesMenu
     {
         public static void ShowEmployeesMenu()
         {
