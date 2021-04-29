@@ -1,7 +1,9 @@
 [
     {
-        "room_number": 1,
-        "total_seats": 150,
+        "number": 1,
+        "total_seats": 6,
+        "total_rows": 2,
+        "seats_per_row": 3,
         "seats": [
             {
                 "row": "A",
