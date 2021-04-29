@@ -65,7 +65,7 @@ namespace Cinecon
 
         private static void ShowAddRoom()
         {
-            var setup = RoomManagement.CreateRoomSetup();
+            var room = RoomManagement.CreateRoomSetup();
 
             Console.Clear();
 
@@ -73,13 +73,13 @@ namespace Cinecon
             {
                 { "Ja", null },
                 { "Nee", null }
-            }, text: $"   Weet je zeker dat je de nieuwe zaal wilt toevoegen?\n\n   Aantal rijen: {setup.Item2}\n   Stoelen per rij: {setup.Item3}\n");
+            }, text: $"   Weet je zeker dat je de nieuwe zaal wilt toevoegen?\n\n   Aantal rijen: {room.TotalRows}\n   Stoelen per rij: {room.SeatsPerRow}\n");
 
             var roomOptionsChoice = roomOptions.MakeChoice();
 
             if (roomOptionsChoice.Key == "Ja")
             {
-                JsonHelper.Rooms.Add(setup.Item1);
+                JsonHelper.Rooms.Add(room);
                 JsonHelper.UpdateJsonFiles();
             }
 

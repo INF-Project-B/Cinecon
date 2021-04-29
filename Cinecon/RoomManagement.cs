@@ -6,10 +6,13 @@ namespace Cinecon
 {
     public static class RoomManagement
     {
-        public static (Room, int, int) CreateRoomSetup()
+        public static Room GetRoom(int roomNumber)
+            => JsonHelper.Rooms.FirstOrDefault(x => x.Number == roomNumber);
+
+        public static Room CreateRoomSetup()
         {
             int roomNumber = JsonHelper.Rooms.Count + 1;
-            int rows;
+            int totalRows;
             int seatsPerRow;
 
             void WriteRoomMenu()
@@ -27,9 +30,9 @@ namespace Cinecon
 
             while (true)
             {
-                if (int.TryParse(ConsoleHelper.ReadLineWithText("   Hoeveel rijen bevat de zaal? (Min. 1, max. 26) -> ", writeLine: false), out rows))
+                if (int.TryParse(ConsoleHelper.ReadLineWithText("   Hoeveel rijen bevat de zaal? (Min. 1, max. 26) -> ", writeLine: false), out totalRows))
                 {
-                    rows = Math.Clamp(rows, 1, 26);
+                    totalRows = Math.Clamp(totalRows, 1, 26);
                     break;
                 }
                 else
@@ -55,17 +58,19 @@ namespace Cinecon
 
             var seats = new List<Seat>();
 
-            for (int i = 0; i < rows; i++)
+            for (int i = 0; i < totalRows; i++)
                 for (int j = 0; j < seatsPerRow; j++)
                     seats.Add(new Seat { Row = ((char)(65 + i)).ToString(), Number = j + 1, IsTaken = false });
 
-            return (new Room
+            return new Room
             {
                 Movies = new List<Movie>(),
-                RoomNumber = roomNumber,
+                Number = roomNumber,
                 Seats = seats,
-                TotalSeats = seats.Count
-            }, rows, seatsPerRow);
-        }
+                TotalSeats = seats.Count,
+                TotalRows = totalRows,
+                SeatsPerRow = seatsPerRow
+            };
+        }        
     }
 }
