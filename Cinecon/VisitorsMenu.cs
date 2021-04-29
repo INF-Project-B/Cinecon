@@ -212,7 +212,7 @@ namespace Cinecon
         private static void ShowItemTypes(MenuCategory category, string item)
         {
             ConsoleHelper.LogoType = LogoType.Menu;
-            ConsoleHelper.Breadcrumb += $"Product: {item}";
+            ConsoleHelper.Breadcrumb += $"\n   Product: {item}";
 
             var typeChoices = new Dictionary<string, Action>();
 
