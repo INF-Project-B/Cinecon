@@ -9,10 +9,12 @@ namespace Cinecon
         public static void ShowEmployeesMenu()
         {
             ConsoleHelper.LogoType = LogoType.Employee;
+            ConsoleHelper.Breadcrumb = null;
 
             var employeesMenu = new ChoiceMenu(new Dictionary<string, Action>
             {
-                { "Reservatiecodes", ShowReservations }
+                { "Reserveringscodes", ShowReservations },
+                { "Zalen", ShowRoomOptions }
             }, addBackChoice: true);
 
             var employeesMenuChoice = employeesMenu.MakeChoice();
@@ -21,6 +23,67 @@ namespace Cinecon
                 Program.StartChoice();
             else
                 employeesMenuChoice.Value();
+        }
+
+        private static void ShowRoomOptions()
+        {
+            ConsoleHelper.Breadcrumb = "Zalen"; 
+
+            var roomManagementOptions = new ChoiceMenu(new Dictionary<string, Action>
+            {
+                { "Zaal toevoegen", ShowAddRoom },
+                { "Zaal management", ShowRooms }
+            }, addBackChoice: true);
+
+            var roomManagementOptionsChoice = roomManagementOptions.MakeChoice();
+
+            if (roomManagementOptionsChoice.Key == "Terug")
+                ShowEmployeesMenu();
+            else
+                roomManagementOptionsChoice.Value();
+        }
+
+        private static void ShowRooms()
+        {
+            ConsoleHelper.Breadcrumb = "Zalen / Zaal management";
+
+            var rooms = new Dictionary<string, Action>();
+            for (int i = 0; i < JsonHelper.Rooms.Count; i++)
+                rooms[$"Zaal {i + 1}"] = null;
+
+            var roomOptions = new ChoiceMenu(rooms, addBackChoice: true);
+
+            var roomOptionsChoice = roomOptions.MakeChoice();
+
+            if (roomOptionsChoice.Key == "Terug")
+                ShowRoomOptions();
+            else                
+                ShowRooms(); // Temporary.
+
+            // TODO: Show room info when selected.
+        }
+
+        private static void ShowAddRoom()
+        {
+            var setup = RoomManagement.CreateRoomSetup();
+
+            Console.Clear();
+
+            var roomOptions = new ChoiceMenu(new Dictionary<string, Action>
+            {
+                { "Ja", null },
+                { "Nee", null }
+            }, text: $"   Weet je zeker dat je de nieuwe zaal wilt toevoegen?\n\n   Aantal rijen: {setup.Item2}\n   Stoelen per rij: {setup.Item3}\n");
+
+            var roomOptionsChoice = roomOptions.MakeChoice();
+
+            if (roomOptionsChoice.Key == "Ja")
+            {
+                JsonHelper.Rooms.Add(setup.Item1);
+                JsonHelper.UpdateJsonFiles();
+            }
+
+            ShowRoomOptions();
         }
 
         private static void ShowReservations()
