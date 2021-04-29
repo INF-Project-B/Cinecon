@@ -29,6 +29,15 @@ namespace Cinecon
                 ColorWriteLine("   " + Breadcrumb + "\n", ConsoleColor.Yellow);
         }
 
+        public static string ReadLineWithText(string text, ConsoleColor color = ConsoleColor.White,  bool writeLine = true)
+        {
+            if (writeLine)
+                ColorWriteLine(text, color);
+            else
+                ColorWrite(text, color);
+            return Console.ReadLine();
+        }
+
         public static void WriteLogo(ConsoleColor color = ConsoleColor.White)
         {
             string text = LogoType switch
