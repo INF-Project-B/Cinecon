@@ -12,12 +12,14 @@ namespace Cinecon
         public static List<string> Genres { get; set; }
         public static List<MenuCategory> Menu { get; set; }
         public static List<Reservation> Reservations { get; set; }
+        public static List<Room> Rooms { get; set; }
 
         public static void LoadJson()
         {
             AddMovies();
             AddGenres();
             AddMenu();
+            AddRooms();
             AddReservations();
         }
 
@@ -66,6 +68,9 @@ namespace Cinecon
 
         private static void AddReservations()
             => Reservations = JsonConvert.DeserializeObject<List<Reservation>>(File.ReadAllText("Assets/reservations.json"));
+
+        private static void AddRooms()
+            => Rooms = JsonConvert.DeserializeObject<List<Room>>(File.ReadAllText("Assets/rooms.json"));
 
         public static void UpdateJsonFiles()
         {
