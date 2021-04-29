@@ -1,0 +1,38 @@
+[
+    {
+        "room_number": 1,
+        "total_seats": 150,
+        "seats": [
+            {
+                "row": "A",
+                "number": 1,
+                "taken": false
+            },
+            {
+                "row": "A",
+                "number": 2,
+                "taken": true
+            },
+            {
+                "row": "A",
+                "number": 3,
+                "taken": true
+            },
+            {
+                "row": "B",
+                "number": 1,
+                "taken": false
+            },
+            {
+                "row": "B",
+                "number": 2,
+                "taken": false
+            },
+            {
+                "row": "B",
+                "number": 3,
+                "taken": false
+            }
+        ]
+    }
+]
