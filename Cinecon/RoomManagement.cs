@@ -34,7 +34,7 @@ namespace Cinecon
                 int result;
                 while (true)
                 {
-                    if (int.TryParse(ConsoleHelper.ReadLineWithText("   Wat is de zaalnummer? -> ", writeLine: false), out result))
+                    if (int.TryParse(ConsoleHelper.ReadLineWithText("   Wat is het zaalnummer? -> ", writeLine: false), out result))
                     {
                         if (GetRoom(result) == null)
                             break;
