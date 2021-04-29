@@ -53,5 +53,6 @@ namespace Cinecon
         [JsonProperty("total_seats")]
         public int TotalSeats { get; set; }
         public List<Seat> Seats { get; set; }
+        public List<Movie> Movies { get; set; }
     }
 }
