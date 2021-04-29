@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 
 namespace Cinecon
 {
@@ -74,8 +75,11 @@ namespace Cinecon
 
         public static void UpdateJsonFiles()
         {
-            File.WriteAllText("Assets/movies.json", JsonConvert.SerializeObject(Movies, Formatting.Indented));
-            File.WriteAllText("Assets/reservations.json", JsonConvert.SerializeObject(Reservations, Formatting.Indented));
+            var settings = new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() };
+
+            File.WriteAllText("Assets/movies.json", JsonConvert.SerializeObject(Movies, Formatting.Indented, settings));
+            File.WriteAllText("Assets/reservations.json", JsonConvert.SerializeObject(Reservations, Formatting.Indented, settings));
+            File.WriteAllText("Assets/rooms.json", JsonConvert.SerializeObject(Rooms, Formatting.Indented, settings));
 
             var menuJson = new JObject();
             foreach (var menuCategory in Menu)
@@ -87,7 +91,7 @@ namespace Cinecon
                 menuJson.Add(menuCategory.Name, menuCategoryJson);
             }
 
-            File.WriteAllText("Assets/menu.json", JsonConvert.SerializeObject(menuJson, Formatting.Indented));
+            File.WriteAllText("Assets/menu.json", JsonConvert.SerializeObject(menuJson, Formatting.Indented, settings));
         }
     }
 }
