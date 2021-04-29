@@ -54,6 +54,7 @@ namespace Cinecon
             else
             {
                 backChoice.Value();
+                JsonHelper.UpdateJsonFiles();
                 ShowCodeInfo(reservation);
             }
         }

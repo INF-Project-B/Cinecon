@@ -65,6 +65,24 @@ namespace Cinecon
         }
 
         private static void AddReservations()
-            => Reservations = JsonConvert.DeserializeObject<List<Reservation>>(File.ReadAllText("Assets/reservation.json"));
-    }           
+            => Reservations = JsonConvert.DeserializeObject<List<Reservation>>(File.ReadAllText("Assets/reservations.json"));
+
+        public static void UpdateJsonFiles()
+        {
+            File.WriteAllText("Assets/movies.json", JsonConvert.SerializeObject(Movies, Formatting.Indented));
+            File.WriteAllText("Assets/reservations.json", JsonConvert.SerializeObject(Reservations, Formatting.Indented));
+
+            var menuJson = new JObject();
+            foreach (var menuCategory in Menu)
+            {
+                var menuCategoryJson = new JObject();
+                foreach (var menuItem in menuCategory.MenuItems)
+                    menuCategoryJson.Add(menuItem.Name, JToken.Parse(JsonConvert.SerializeObject(menuItem.ItemTypes)));
+
+                menuJson.Add(menuCategory.Name, menuCategoryJson);
+            }
+
+            File.WriteAllText("Assets/menu.json", JsonConvert.SerializeObject(menuJson, Formatting.Indented));
+        }
+    }
 }
