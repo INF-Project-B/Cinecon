@@ -9,68 +9,100 @@ namespace Cinecon
         public static Room GetRoom(int roomNumber)
             => JsonHelper.Rooms.FirstOrDefault(x => x.Number == roomNumber);
 
-        public static Room CreateRoomSetup()
+        public static class RoomCreation
         {
-            int roomNumber = JsonHelper.Rooms.Count + 1;
-            int totalRows;
-            int seatsPerRow;
+            public static Room CreateRoomSetup()
+            {
+                WriteRoomMenu();
 
-            void WriteRoomMenu()
+                int roomNumber = AskRoomNumber();
+                int totalRows = AskTotalRows();
+                int seatsPerRow = AskSeatsPerRow();
+
+                return new Room
+                {
+                    Movies = new List<Movie>(),
+                    Number = roomNumber,
+                    TotalRows = totalRows,
+                    SeatsPerRow = seatsPerRow
+                };
+            }
+
+            public static int AskRoomNumber()
+            {
+                Console.CursorVisible = true;
+                int result;
+                while (true)
+                {
+                    if (int.TryParse(ConsoleHelper.ReadLineWithText("   Wat is de zaalnummer? -> ", writeLine: false), out result))
+                    {
+                        if (GetRoom(result) == null)
+                            break;
+                        else
+                        {
+                            WriteRoomMenu();
+                            ConsoleHelper.ColorWriteLine("   Er bestaat al een zaal met dit nummer.\n", ConsoleColor.Red);
+                        }
+                            
+                    }
+                    else
+                    {
+                        WriteRoomMenu();
+                        ConsoleHelper.ColorWriteLine("   Vul a.u.b. een getal in.\n", ConsoleColor.Red);
+                    }
+                }
+                Console.CursorVisible = false;
+                return result;
+            }
+
+            public static int AskTotalRows()
+            {
+                Console.CursorVisible = true;
+                int result;
+                while (true)
+                {
+                    if (int.TryParse(ConsoleHelper.ReadLineWithText("   Hoeveel rijen bevat de zaal? (Min. 1, max. 26) -> ", writeLine: false), out result))
+                    {
+                        result = Math.Clamp(result, 1, 26);
+                        break;
+                    }
+                    else
+                    {
+                        WriteRoomMenu();
+                        ConsoleHelper.ColorWriteLine("   Vul a.u.b. een positief getal in.\n", ConsoleColor.Red);
+                    }
+                }
+                Console.CursorVisible = false;
+                return result;
+            }
+
+            public static int AskSeatsPerRow()
+            {
+                Console.CursorVisible = true;
+                int result;
+                while (true)
+                {
+                    if (int.TryParse(ConsoleHelper.ReadLineWithText("   Hoeveel stoelen bevat elke rij? (Min. 1) -> ", writeLine: false), out result))
+                    {
+                        result = Math.Clamp(result, 1, int.MaxValue);
+                        break;
+                    }
+                    else
+                    {
+                        WriteRoomMenu();
+                        ConsoleHelper.ColorWriteLine("   Vul a.u.b. een positief getal in.\n", ConsoleColor.Red);
+                    }
+                }
+                Console.CursorVisible = false;
+                return result;
+            }
+
+            private static void WriteRoomMenu()
             {
                 Console.Clear();
-                Console.CursorVisible = true;
                 ConsoleHelper.WriteLogo(ConsoleColor.Red);
-                ConsoleHelper.Breadcrumb = "Zalen / Zaal toevoegen";
                 ConsoleHelper.WriteBreadcrumb();
-                ConsoleHelper.ColorWrite("   Nieuwe zaal: ", ConsoleColor.Red);
-                ConsoleHelper.ColorWrite($"{roomNumber}\n\n", ConsoleColor.White);
             }
-
-            WriteRoomMenu();
-
-            while (true)
-            {
-                if (int.TryParse(ConsoleHelper.ReadLineWithText("   Hoeveel rijen bevat de zaal? (Min. 1, max. 26) -> ", writeLine: false), out totalRows))
-                {
-                    totalRows = Math.Clamp(totalRows, 1, 26);
-                    break;
-                }
-                else
-                {
-                    WriteRoomMenu();
-                    ConsoleHelper.ColorWriteLine("   Vul a.u.b. een positief getal in.\n", ConsoleColor.Red);
-                }
-            }
-
-            while (true)
-            {
-                if (int.TryParse(ConsoleHelper.ReadLineWithText("   Hoeveel stoelen bevat elke rij? (Min. 1) -> ", writeLine: false), out seatsPerRow))
-                {
-                    seatsPerRow = Math.Clamp(seatsPerRow, 1, int.MaxValue);
-                    break;
-                }
-                else
-                {
-                    WriteRoomMenu();
-                    ConsoleHelper.ColorWriteLine("   Vul a.u.b. een positief getal in.\n", ConsoleColor.Red);
-                }
-            }
-
-            var seats = new List<Seat>();
-
-            for (int i = 0; i < totalRows; i++)
-                for (int j = 0; j < seatsPerRow; j++)
-                    seats.Add(new Seat { Row = ((char)(65 + i)).ToString(), Number = j + 1, IsTaken = false });
-
-            return new Room
-            {
-                Movies = new List<Movie>(),
-                Number = roomNumber,
-                Seats = seats,
-                TotalSeats = seats.Count,
-                TotalRows = totalRows,
-                SeatsPerRow = seatsPerRow
-            };
         }
 
         public static void ShowRoomOptions()
@@ -96,10 +128,10 @@ namespace Cinecon
             ConsoleHelper.Breadcrumb = "Zalen / Zaal management";
 
             var rooms = new Dictionary<string, Action>();
-            for (int i = 0; i < JsonHelper.Rooms.Count; i++)
-                rooms[$"Zaal {i + 1}"] = null;
+            foreach (var room in JsonHelper.Rooms.OrderBy(x => x.Number))
+                rooms[$"Zaal {room.Number}"] = null;
 
-            var roomOptions = new ChoiceMenu(rooms, addBackChoice: true);
+            var roomOptions = new ChoiceMenu(rooms, addBackChoice: true, rooms.Count > 0 ? "" : "   Geen zalen gevonden.");
 
             var roomOptionsChoice = roomOptions.MakeChoice();
 
@@ -111,33 +143,78 @@ namespace Cinecon
 
         private static void ShowRoomManagement(int roomNumber)
         {
+            Console.Clear();
+
             ConsoleHelper.Breadcrumb = $"Zalen / Zaal management / Zaal {roomNumber}";
 
             var room = GetRoom(roomNumber);
 
             var roomInfoOptions = new ChoiceMenu(new Dictionary<string, Action>
             {
+                { "Zaalnummer wijzigen", null },
                 { "Aantal rijen wijzigen", null },
                 { "Aantal stoelen per rij wijzigen", null },
                 { "Zaal verwijderen", null }
             }, addBackChoice: true, $"   Zaal: {room.Number}\n   Aantal rijen: {room.TotalRows}\n   Stoelen per rij: {room.SeatsPerRow}\n   Aantal stoelen: {room.TotalSeats}\n");
 
             var roomInfoOptionsChoice = roomInfoOptions.MakeChoice();
+            
+            ConsoleHelper.WriteLogo(ConsoleColor.Red);                       
 
-            if (roomInfoOptionsChoice.Key == "Terug")
-                ShowRooms();
+            switch (roomInfoOptionsChoice.Key)
+            {
+                case "Terug":
+                    Console.Clear();
+                    ShowRooms();
+                    break;
+                case "Zaalnummer wijzigen":                    
+                    ConsoleHelper.Breadcrumb += " / Zaalnummer wijzigen";
+                    ConsoleHelper.WriteBreadcrumb();
+                    room.Number = RoomCreation.AskRoomNumber();
+                    JsonHelper.UpdateJsonFiles();
+                    break;
+                case "Aantal rijen wijzigen":
+                    ConsoleHelper.Breadcrumb += " / Aantal rijen wijzigen";
+                    ConsoleHelper.WriteBreadcrumb();
+                    room.TotalRows = RoomCreation.AskTotalRows();
+                    JsonHelper.UpdateJsonFiles();
+                    break;
+                case "Aantal stoelen per rij wijzigen":
+                    ConsoleHelper.Breadcrumb += " / Aantal stoelen per rij wijzigen";
+                    ConsoleHelper.WriteBreadcrumb();
+                    room.SeatsPerRow = RoomCreation.AskSeatsPerRow();
+                    JsonHelper.UpdateJsonFiles();
+                    break;
+                case "Zaal verwijderen":
+                    ConsoleHelper.Breadcrumb += " / Zaal verwijderen";
+                    ConsoleHelper.WriteBreadcrumb();
+                    Console.Clear();
+                    var confirmationChoice = ChoiceMenu.CreateConfirmationChoiceMenu("   Weet je zeker dat je deze zaal wilt verwijderen?\n").MakeChoice();
+                    if (confirmationChoice.Key == "Ja")
+                    {
+                        JsonHelper.Rooms.Remove(room);
+                        JsonHelper.UpdateJsonFiles();
+                        Console.Clear();
+                        ShowRooms();
+                    }
+                    else
+                        ShowRoomManagement(roomNumber);
+                    break;
+            }
+
+            ShowRoomManagement(room.Number);
         }
 
         private static void ShowAddRoom()
         {
-            var room = CreateRoomSetup();
+            ConsoleHelper.Breadcrumb = "Zalen / Zaal toevoegen";
+
+            var room = RoomCreation.CreateRoomSetup();
 
             Console.Clear();
 
-            var roomOptions = ChoiceMenu.CreateConfirmationChoiceMenu($"   Weet je zeker dat je de nieuwe zaal wilt toevoegen?\n\n" +
-                $"   Aantal rijen: {room.TotalRows}\n   Stoelen per rij: {room.SeatsPerRow}\n");
-
-            var roomOptionsChoice = roomOptions.MakeChoice();
+            var roomOptionsChoice = ChoiceMenu.CreateConfirmationChoiceMenu($"   Weet je zeker dat je de nieuwe zaal wilt toevoegen?\n\n" +
+                $"   Zaal: {room.Number}\n   Aantal rijen: {room.TotalRows}\n   Stoelen per rij: {room.SeatsPerRow}\n   Aantal stoelen: {room.TotalSeats}\n").MakeChoice();
 
             if (roomOptionsChoice.Key == "Ja")
             {
