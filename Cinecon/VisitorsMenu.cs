@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Cinecon
 {
-    public class VisitorsMenu
+    public static class VisitorsMenu
     {
         private static List<KeyValuePair<string, Action>> _genres;
         private static KeyValuePair<string, string[]> _dayAndTimes;

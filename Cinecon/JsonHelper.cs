@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 
 namespace Cinecon
 {
@@ -12,12 +13,14 @@ namespace Cinecon
         public static List<string> Genres { get; set; }
         public static List<MenuCategory> Menu { get; set; }
         public static List<Reservation> Reservations { get; set; }
+        public static List<Room> Rooms { get; set; }
 
         public static void LoadJson()
         {
             AddMovies();
             AddGenres();
             AddMenu();
+            AddRooms();
             AddReservations();
         }
 
@@ -67,10 +70,16 @@ namespace Cinecon
         private static void AddReservations()
             => Reservations = JsonConvert.DeserializeObject<List<Reservation>>(File.ReadAllText("Assets/reservations.json"));
 
+        private static void AddRooms()
+            => Rooms = JsonConvert.DeserializeObject<List<Room>>(File.ReadAllText("Assets/rooms.json"));
+
         public static void UpdateJsonFiles()
         {
-            File.WriteAllText("Assets/movies.json", JsonConvert.SerializeObject(Movies, Formatting.Indented));
-            File.WriteAllText("Assets/reservations.json", JsonConvert.SerializeObject(Reservations, Formatting.Indented));
+            var settings = new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() };
+
+            File.WriteAllText("Assets/movies.json", JsonConvert.SerializeObject(Movies, Formatting.Indented, settings));
+            File.WriteAllText("Assets/reservations.json", JsonConvert.SerializeObject(Reservations, Formatting.Indented, settings));
+            File.WriteAllText("Assets/rooms.json", JsonConvert.SerializeObject(Rooms, Formatting.Indented, settings));
 
             var menuJson = new JObject();
             foreach (var menuCategory in Menu)
@@ -82,7 +91,7 @@ namespace Cinecon
                 menuJson.Add(menuCategory.Name, menuCategoryJson);
             }
 
-            File.WriteAllText("Assets/menu.json", JsonConvert.SerializeObject(menuJson, Formatting.Indented));
+            File.WriteAllText("Assets/menu.json", JsonConvert.SerializeObject(menuJson, Formatting.Indented, settings));
         }
     }
 }

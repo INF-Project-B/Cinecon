@@ -2,7 +2,7 @@
 
 namespace Cinecon
 {
-    public class ConsoleHelper
+    public static class ConsoleHelper
     {
         public static LogoType LogoType { get; set; } = LogoType.Cinecon;
         public static string Breadcrumb { get; set; }
@@ -27,6 +27,15 @@ namespace Cinecon
         {
             if (!string.IsNullOrEmpty(Breadcrumb))
                 ColorWriteLine("   " + Breadcrumb + "\n", ConsoleColor.Yellow);
+        }
+
+        public static string ReadLineWithText(string text, ConsoleColor color = ConsoleColor.White,  bool writeLine = true)
+        {
+            if (writeLine)
+                ColorWriteLine(text, color);
+            else
+                ColorWrite(text, color);
+            return Console.ReadLine();
         }
 
         public static void WriteLogo(ConsoleColor color = ConsoleColor.White)
