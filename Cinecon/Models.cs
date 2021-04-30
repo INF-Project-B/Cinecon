@@ -48,11 +48,24 @@ namespace Cinecon
 
     public class Room
     {
-        [JsonProperty("room_number")]
-        public int RoomNumber { get; set; }
+        public int Number { get; set; }
         [JsonProperty("total_seats")]
-        public int TotalSeats { get; set; }
-        public List<Seat> Seats { get; set; }
+        public int TotalSeats { get => TotalRows * SeatsPerRow; }
+        [JsonProperty("total_rows")]
+        public int TotalRows { get; set; }
+        [JsonProperty("seats_per_row")]
+        public int SeatsPerRow { get; set; }
         public List<Movie> Movies { get; set; }
+        public List<Seat> Seats
+        {
+            get 
+            {
+                var seats = new List<Seat>();
+                for (int i = 0; i < TotalRows; i++)
+                    for (int j = 0; j < SeatsPerRow; j++)
+                        seats.Add(new Seat { Row = ((char)(65 + i)).ToString(), Number = j + 1, IsTaken = false });
+                return seats;
+            } 
+        }
     }
 }
