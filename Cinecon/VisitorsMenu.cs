@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Cinecon
 {
-    public class VisitorsMenu
+    public static class VisitorsMenu
     {
         private static List<KeyValuePair<string, Action>> _genres;
         private static KeyValuePair<string, string[]> _dayAndTimes;
@@ -76,7 +76,9 @@ namespace Cinecon
             }, addBackChoice: true, text);
 
             var filmChoice = filmChoiceMenu.MakeChoice();
-            // TODO: Add functionality for when the user makes a selection.
+
+            if (filmChoice.Key == "Terug")
+                ShowFilms();
         }
 
         private static void ShowFilters()
@@ -210,7 +212,7 @@ namespace Cinecon
         private static void ShowItemTypes(MenuCategory category, string item)
         {
             ConsoleHelper.LogoType = LogoType.Menu;
-            ConsoleHelper.Breadcrumb += $"Product: {item}";
+            ConsoleHelper.Breadcrumb += $"\n   Product: {item}";
 
             var typeChoices = new Dictionary<string, Action>();
 

@@ -3,6 +3,7 @@ using System.IO;
 using System.Linq;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
+using Newtonsoft.Json.Serialization;
 
 namespace Cinecon
 {
@@ -12,12 +13,14 @@ namespace Cinecon
         public static List<string> Genres { get; set; }
         public static List<MenuCategory> Menu { get; set; }
         public static List<Reservation> Reservations { get; set; }
+        public static List<Room> Rooms { get; set; }
 
         public static void LoadJson()
         {
             AddMovies();
             AddGenres();
             AddMenu();
+            AddRooms();
             AddReservations();
         }
 
@@ -65,48 +68,30 @@ namespace Cinecon
         }
 
         private static void AddReservations()
-            => Reservations = JsonConvert.DeserializeObject<List<Reservation>>(File.ReadAllText("Assets/reservation.json"));
-    }    
-    
-    public class Movie
-    {
-        public int Id { get; set; }
-        public string Title { get; set; }
-        public string Description { get; set; }
-        public string[] Genres { get; set; }
-        public int Room { get; set; }
-        // The key is the day. The value is an array of the times.
-        public Dictionary<string, string[]> Days { get; set; }
-        public bool BringId { get; set; }
-    }
+            => Reservations = JsonConvert.DeserializeObject<List<Reservation>>(File.ReadAllText("Assets/reservations.json"));
 
-    public class MenuCategory
-    {
-        public string Name { get; set; }
-        public List<MenuItem> MenuItems { get; set; }
-    }
+        private static void AddRooms()
+            => Rooms = JsonConvert.DeserializeObject<List<Room>>(File.ReadAllText("Assets/rooms.json"));
 
-    public class MenuItem
-    {
-        public string Name { get; set; }
-        // The key is the size/product type. The value is the price.
-        public Dictionary<string, double> ItemTypes { get; set; }
-    }
+        public static void UpdateJsonFiles()
+        {
+            var settings = new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() };
 
-    public class Reservation
-    {
-        public string Code { get; set; }
-        [JsonProperty("is_activated")]
-        public bool IsActivated { get; set; }
-        [JsonProperty("payment_method")]
-        public string PaymentMethod { get; set; }
-        public List<Seat> Seats { get; set; }
-    }
+            File.WriteAllText("Assets/movies.json", JsonConvert.SerializeObject(Movies, Formatting.Indented, settings));
+            File.WriteAllText("Assets/reservations.json", JsonConvert.SerializeObject(Reservations, Formatting.Indented, settings));
+            File.WriteAllText("Assets/rooms.json", JsonConvert.SerializeObject(Rooms, Formatting.Indented, settings));
 
-    public class Seat
-    {
-        public string Row { get; set; }
-        public int Number { get; set; }
-        public bool IsTaken { get; set; } = true;
+            var menuJson = new JObject();
+            foreach (var menuCategory in Menu)
+            {
+                var menuCategoryJson = new JObject();
+                foreach (var menuItem in menuCategory.MenuItems)
+                    menuCategoryJson.Add(menuItem.Name, JToken.Parse(JsonConvert.SerializeObject(menuItem.ItemTypes)));
+
+                menuJson.Add(menuCategory.Name, menuCategoryJson);
+            }
+
+            File.WriteAllText("Assets/menu.json", JsonConvert.SerializeObject(menuJson, Formatting.Indented, settings));
+        }
     }
 }

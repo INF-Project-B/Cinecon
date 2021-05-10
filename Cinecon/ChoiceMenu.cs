@@ -20,6 +20,15 @@ namespace Cinecon
             _textColor = textColor;
         }
 
+        public static ChoiceMenu CreateConfirmationChoiceMenu(string text = null, ConsoleColor color = ConsoleColor.White)
+        {
+            return new ChoiceMenu(new Dictionary<string, Action>
+            {
+                { "Ja", null },
+                { "Nee", null }
+            }, text: text, textColor: color);
+        }
+
         private void ChoiceSetup(List<KeyValuePair<string, Action>> preselected = null)
         {
             Console.CursorVisible = false;
