@@ -28,13 +28,23 @@ namespace Cinecon
         public Dictionary<string, decimal> ItemTypes { get; set; }
     }
 
+    public class ReservationData
+    {
+        [JsonProperty("payment_methods")]
+        public string[] PaymentMethods { get; set; }
+        public List<Reservation> Reservations { get; set; }
+    }
+
     public class Reservation
     {
         public string Code { get; set; }
+        public string Name { get; set; }
+        public string Email { get; set; }
         [JsonProperty("is_activated")]
         public bool IsActivated { get; set; }
         [JsonProperty("payment_method")]
         public string PaymentMethod { get; set; }
+        public Movie Movie { get; set; }
         public List<Seat> Seats { get; set; }
     }
 
@@ -67,5 +77,13 @@ namespace Cinecon
                 return seats;
             } 
         }
+    }
+
+    public class EmailData
+    {
+        public string Email { get; set; }
+        public string Password { get; set; }
+        public string Subject { get; set; }
+        public string Body { get; set; }
     }
 }
