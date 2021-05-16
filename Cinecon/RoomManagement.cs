@@ -13,7 +13,7 @@ namespace Cinecon
         {
             public static Room CreateRoomSetup()
             {
-                WriteRoomMenu();
+                ConsoleHelper.WriteLogoAndBreadcrumb();
 
                 int roomNumber = AskRoomNumber();
                 int totalRows = AskTotalRows();
@@ -40,14 +40,14 @@ namespace Cinecon
                             break;
                         else
                         {
-                            WriteRoomMenu();
+                            ConsoleHelper.WriteLogoAndBreadcrumb();
                             ConsoleHelper.ColorWriteLine("   Er bestaat al een zaal met dit nummer.\n", ConsoleColor.Red);
                         }
                             
                     }
                     else
                     {
-                        WriteRoomMenu();
+                        ConsoleHelper.WriteLogoAndBreadcrumb();
                         ConsoleHelper.ColorWriteLine("   Vul a.u.b. een getal in.\n", ConsoleColor.Red);
                     }
                 }
@@ -68,7 +68,7 @@ namespace Cinecon
                     }
                     else
                     {
-                        WriteRoomMenu();
+                        ConsoleHelper.WriteLogoAndBreadcrumb();
                         ConsoleHelper.ColorWriteLine("   Vul a.u.b. een positief getal in.\n", ConsoleColor.Red);
                     }
                 }
@@ -89,19 +89,12 @@ namespace Cinecon
                     }
                     else
                     {
-                        WriteRoomMenu();
+                        ConsoleHelper.WriteLogoAndBreadcrumb();
                         ConsoleHelper.ColorWriteLine("   Vul a.u.b. een positief getal in.\n", ConsoleColor.Red);
                     }
                 }
                 Console.CursorVisible = false;
                 return result;
-            }
-
-            private static void WriteRoomMenu()
-            {
-                Console.Clear();
-                ConsoleHelper.WriteLogo(ConsoleColor.Red);
-                ConsoleHelper.WriteBreadcrumb();
             }
         }
 
