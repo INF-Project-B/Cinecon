@@ -9,6 +9,24 @@ namespace Cinecon
         private static List<KeyValuePair<string, Action>> _genres;
         private static KeyValuePair<string, string[]> _dayAndTimes;
 
+        private static readonly List<KeyValuePair<string, decimal>> _menuCart = new List<KeyValuePair<string, decimal>>();
+        private static string MenuCartText 
+        { 
+            get
+            {
+                var menuCart = new List<KeyValuePair<string, decimal>>();
+                foreach (var item in _menuCart)
+                {
+                    var count = _menuCart.Count(x => x.Key == item.Key);
+                    if (count > 1)
+                        menuCart.Add(new KeyValuePair<string, decimal>(item.Key + $" (x{count})", item.Value));
+                    else
+                        menuCart.Add(item);
+                }
+                return $"   Winkelmand (totaal: {_menuCart.Select(x => x.Value).Sum():0.00} euro)\n     {(menuCart.Any() ? string.Join("\n     ", menuCart.ToHashSet().Select(x => x.Key)) : "Leeg")}\n";
+            }
+        }
+
         public static void ShowVisitorMenu()
         {
             ConsoleHelper.LogoType = LogoType.Visitor;
@@ -16,16 +34,14 @@ namespace Cinecon
 
             var visitorsMenu = new ChoiceMenu(new Dictionary<string, Action>
             {
-                { "Films", null },
-                { "Menu", ShowMenu }
+                { "Films", ShowFilms },
+                { "Menu", ShowMenuConfirmation }
             }, addBackChoice: true);
 
             var visitorsMenuChoice = visitorsMenu.MakeChoice();
 
             if (visitorsMenuChoice.Key == "Terug")
                 Program.StartChoice();
-            else if (visitorsMenuChoice.Key == "Films")
-                ShowFilms();
             else
                 visitorsMenuChoice.Value();
         }
@@ -38,6 +54,8 @@ namespace Cinecon
 
             var movies = new Dictionary<string, Action>();
 
+            movies["Filters"] = ShowFilters;
+
             foreach (var movie in JsonHelper.Movies)
             {
                 if (_genres?.Count > 0 && movie.Genres.Intersect(_genres.Select(x => x.Key)).Count() == 0)
@@ -47,7 +65,6 @@ namespace Cinecon
                 movies[movie.Title] = null;
             }
 
-            movies["Filters"] = ShowFilters;
 
             var movieMenu = new ChoiceMenu(movies, true);
 
@@ -169,6 +186,19 @@ namespace Cinecon
             ShowFilters();
         }
 
+        private static void ShowMenuConfirmation()
+        {
+            ConsoleHelper.LogoType = LogoType.Films;
+            ConsoleHelper.Breadcrumb = null;
+
+            var menuConfirmationChoice = ChoiceMenu.CreateConfirmationChoiceMenu("   Wil je het menu assortiment bekijken?\n").MakeChoice();
+
+            if (menuConfirmationChoice.Key == "Ja")
+                ShowMenu();
+            else
+                ShowVisitorMenu(); // TODO: Go to payment screen.
+        }
+
         private static void ShowMenu()
         {
             ConsoleHelper.LogoType = LogoType.Menu;
@@ -179,12 +209,22 @@ namespace Cinecon
             foreach (var category in JsonHelper.Menu)
                 categoryChoices[category.Name] = null;
 
-            var categoryChoiceMenu = new ChoiceMenu(categoryChoices, true);
+            categoryChoices["Winkelmand legen"] = null;
+            categoryChoices["Ga door"] = null;
+
+            var categoryChoiceMenu = new ChoiceMenu(categoryChoices, true, MenuCartText);
 
             var categoryChoice = categoryChoiceMenu.MakeChoice();
 
             if (categoryChoice.Key == "Terug")
                 ShowVisitorMenu();
+            else if (categoryChoice.Key == "Winkelmand legen")
+            {
+                _menuCart.Clear();
+                ShowMenu();
+            }
+            else if (categoryChoice.Key == "Ga door")
+                ShowMenu();
             else
                 ShowCategoryItems(JsonHelper.Menu.FirstOrDefault(x => x.Name == categoryChoice.Key));            
         }
@@ -199,7 +239,7 @@ namespace Cinecon
             foreach (var item in category.MenuItems)
                 itemChoices[item.Name] = null;
 
-            var itemChoiceMenu = new ChoiceMenu(itemChoices, true);
+            var itemChoiceMenu = new ChoiceMenu(itemChoices, true, MenuCartText);
 
             var itemChoice = itemChoiceMenu.MakeChoice();
 
@@ -209,26 +249,30 @@ namespace Cinecon
                 ShowItemTypes(category, itemChoice.Key);
         }
 
-        private static void ShowItemTypes(MenuCategory category, string item)
+        private static void ShowItemTypes(MenuCategory category, string menuItem)
         {
             ConsoleHelper.LogoType = LogoType.Menu;
-            ConsoleHelper.Breadcrumb += $"\n   Product: {item}";
+            ConsoleHelper.Breadcrumb += $"\n   Product: {menuItem}";
+
+            var itemTypes = category.MenuItems.FirstOrDefault(x => x.Name == menuItem).ItemTypes;
 
             var typeChoices = new Dictionary<string, Action>();
 
-            foreach (var type in category.MenuItems.FirstOrDefault(x => x.Name == item).ItemTypes)
+            foreach (var type in itemTypes)
                 typeChoices[$"{type.Key} - {type.Value:0.00} euro"] = null;
 
-            var typeChoiceMenu = new ChoiceMenu(typeChoices, true);
+            var typeChoiceMenu = new ChoiceMenu(typeChoices, true, MenuCartText);
 
             var typeChoice = typeChoiceMenu.MakeChoice();
 
             if (typeChoice.Key == "Terug")
                 ShowCategoryItems(category);
-            else 
-            { 
-                // Coming soon 
-            }                
+            else
+            {
+                var itemTypeData = itemTypes.FirstOrDefault(x => typeChoice.Key.Contains(x.Key));
+                _menuCart.Add(new KeyValuePair<string, decimal>($"{menuItem} {itemTypeData.Key.ToLower()} - {itemTypeData.Value:0.00}", itemTypeData.Value));
+                ShowMenu();
+            }
         }
     }
 }
