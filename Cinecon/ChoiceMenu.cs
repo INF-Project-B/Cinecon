@@ -125,7 +125,7 @@ namespace Cinecon
             
             foreach (var choice in _choices)
             {
-                if (new[] { "Terug", "Exit", "Filters" }.Any(x => x == choice.Key))
+                if (new[] { "Terug", "Exit", "Ga door", "Winkelmand legen" }.Any(x => x == choice.Key))
                     Console.WriteLine();
 
                 bool choiceIsSelected = selectedChoices != null && selectedChoices.Contains(choice);
@@ -142,16 +142,14 @@ namespace Cinecon
                 }
                 else
                 {
-                    if (choice.Key == "Filters")
-                        ConsoleHelper.ColorWriteLine($"   {choice.Key}", ConsoleColor.Yellow);
+                    if (choiceIsSelected)
+                        ConsoleHelper.ColorWriteLine($"   {choice.Key}", ConsoleColor.Green);
                     else
-                    {
-                        if (choiceIsSelected)
-                            ConsoleHelper.ColorWriteLine($"   {choice.Key}", ConsoleColor.Green);
-                        else
-                            Console.WriteLine($"   {choice.Key}");
-                    }
+                        Console.WriteLine($"   {choice.Key}");
                 }
+
+                if (choice.Key == "Filters")
+                    Console.WriteLine();
             }
         }
     }

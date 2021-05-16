@@ -25,7 +25,7 @@ namespace Cinecon
     {
         public string Name { get; set; }
         // The key is the size/product type. The value is the price.
-        public Dictionary<string, double> ItemTypes { get; set; }
+        public Dictionary<string, decimal> ItemTypes { get; set; }
     }
 
     public class Reservation

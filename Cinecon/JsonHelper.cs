@@ -53,7 +53,7 @@ namespace Cinecon
                     menuItems.Add(new MenuItem
                     {
                         Name = menuItem.Key,
-                        ItemTypes = menuItem.Value.ToObject<Dictionary<string, double>>()
+                        ItemTypes = menuItem.Value.ToObject<Dictionary<string, decimal>>()
                     });
                 }
 
