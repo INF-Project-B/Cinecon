@@ -72,13 +72,39 @@ namespace Cinecon
 
             var filmChoiceMenu = new ChoiceMenu(new Dictionary<string, Action>
             {
-                { "Koop tickets", null },
+                { "Koop tickets", null }
             }, addBackChoice: true, text);
 
             var filmChoice = filmChoiceMenu.MakeChoice();
 
             if (filmChoice.Key == "Terug")
                 ShowFilms();
+            else
+                ShowSeats(movie);
+        }
+
+        private static void ShowSeats(Movie movie)
+        {
+            var room = JsonHelper.Rooms.FirstOrDefault(x => x.Number == movie.Room);
+
+            var text = "   U mag kiezen uit de volgende zitplaatsen:\n";
+
+            var seats = new List<Dictionary<string, Action>>();
+
+            var seatNumber = 0;
+            for (int i = 0; i < room.TotalRows; i++)
+            {
+                var row = new Dictionary<string, Action>();
+                for (int j = 0; j < room.SeatsPerRow; j++)
+                {
+                    row[$"{room.Seats[seatNumber].Row}{(room.Seats[seatNumber].Number < 10 ? "0" : "")}{room.Seats[seatNumber].Number}"] = null;
+                    seatNumber++;
+                }
+                seats.Add(row);
+            }
+            var seatChoiceMenu = new ChoiceMenu(seats, text, ConsoleColor.Yellow);
+
+            var seatChoices = seatChoiceMenu.MakeAllChoice(room: room);
         }
 
         private static void ShowFilters()
