@@ -12,8 +12,9 @@ namespace Cinecon
         public static List<Movie> Movies { get; set; }
         public static List<string> Genres { get; set; }
         public static List<MenuCategory> Menu { get; set; }
-        public static List<Reservation> Reservations { get; set; }
+        public static ReservationData ReservationData { get; set; }
         public static List<Room> Rooms { get; set; }
+        public static EmailData EmailData { get; set; }
 
         public static void LoadJson()
         {
@@ -22,6 +23,7 @@ namespace Cinecon
             AddMenu();
             AddRooms();
             AddReservations();
+            AddEmailData();
         }
 
         private static void AddMovies()
@@ -68,17 +70,20 @@ namespace Cinecon
         }
 
         private static void AddReservations()
-            => Reservations = JsonConvert.DeserializeObject<List<Reservation>>(File.ReadAllText("Assets/reservations.json"));
+            => ReservationData = JsonConvert.DeserializeObject<ReservationData>(File.ReadAllText("Assets/reservations.json"));
 
         private static void AddRooms()
             => Rooms = JsonConvert.DeserializeObject<List<Room>>(File.ReadAllText("Assets/rooms.json"));
+
+        private static void AddEmailData()
+            => EmailData = JsonConvert.DeserializeObject<EmailData>(File.ReadAllText("Assets/email.json"));
 
         public static void UpdateJsonFiles()
         {
             var settings = new JsonSerializerSettings { ContractResolver = new CamelCasePropertyNamesContractResolver() };
 
             File.WriteAllText("Assets/movies.json", JsonConvert.SerializeObject(Movies, Formatting.Indented, settings));
-            File.WriteAllText("Assets/reservations.json", JsonConvert.SerializeObject(Reservations, Formatting.Indented, settings));
+            File.WriteAllText("Assets/reservations.json", JsonConvert.SerializeObject(ReservationData, Formatting.Indented, settings));
             File.WriteAllText("Assets/rooms.json", JsonConvert.SerializeObject(Rooms, Formatting.Indented, settings));
 
             var menuJson = new JObject();
