@@ -22,10 +22,7 @@ namespace Cinecon
                 foreach (var item in _menuCart)
                 {
                     var count = _menuCart.Count(x => x.Key == item.Key);
-                    if (count > 1)
-                        menuCart.Add(new KeyValuePair<string, decimal>(item.Key + $" (x{count})", item.Value));
-                    else
-                        menuCart.Add(item);
+                    menuCart.Add(count > 1 ? new KeyValuePair<string, decimal>(item.Key + $" (x{count})", item.Value) : item);
                 }
                 return $"   Winkelmand (totaal: {_menuCart.Select(x => x.Value).Sum():0.00} euro)\n     {(menuCart.Any() ? string.Join("\n     ", menuCart.ToHashSet().Select(x => x.Key)) : "Leeg")}\n";
             }
