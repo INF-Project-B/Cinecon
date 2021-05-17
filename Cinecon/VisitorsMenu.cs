@@ -4,7 +4,6 @@ using System.Linq;
 using System.Net;
 using System.Net.Mail;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Cinecon
 {
@@ -353,7 +352,7 @@ namespace Cinecon
 
             JsonHelper.UpdateJsonFiles();
 
-            Task.Run(() => SendReservationEmail(reservation));
+            SendReservationEmail(reservation);
 
             new ChoiceMenu(new Dictionary<string, Action>
             {
