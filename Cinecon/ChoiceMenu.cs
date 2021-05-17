@@ -126,7 +126,7 @@ namespace Cinecon
         public List<List<KeyValuePair<string, Action>>> MakeAllChoice(List<List<KeyValuePair<string, Action>>> preselectedGenres = null, Room room = null)
         {
             Console.CursorVisible = false;
-            WriteAllMenu(0, 0, allChoices: preselectedGenres, room: room);
+            WriteAllMenu(0, 0, room: room);
 
             int indexY = 0;
 
@@ -139,12 +139,8 @@ namespace Cinecon
             var count = 0;
 
             foreach (var row in allChoices)
-            {
                 foreach (var collumn in row)
-                {
                     choices[count++] = allChoices[allChoices.IndexOf(row)][row.IndexOf(collumn)];
-                }
-            }
 
             while (true)
             {
@@ -204,7 +200,7 @@ namespace Cinecon
             }
         }
         
-        private void WriteAllMenu(int indexY, int indexX, List<KeyValuePair<string, Action>> selectedChoices = null, List<List<KeyValuePair<string, Action>>> allChoices = null, Room room = null)
+        private void WriteAllMenu(int indexY, int indexX, List<KeyValuePair<string, Action>> selectedChoices = null, Room room = null)
         {
             ConsoleHelper.WriteLogo(ConsoleColor.Red);
             ConsoleHelper.WriteBreadcrumb();
@@ -224,16 +220,9 @@ namespace Cinecon
                     var seatIsTaken = room.Seats.FirstOrDefault(x => $"{ x.Row}{ (x.Number < 10 ? "0" : "")}{ x.Number}" == choice.Key).IsTaken;
 
                     if (choice.Key == _2dChoices[indexY].ElementAt(indexX).Key)
-                    {
-                        if (choiceIsSelected)
-                            ConsoleHelper.ColorWrite($"   [{choice.Key}]", ConsoleColor.Yellow);
-                        else
-                            ConsoleHelper.ColorWrite($"   [{choice.Key}]", ConsoleColor.Red);
-                    }
+                        ConsoleHelper.ColorWrite($"   [{choice.Key}]", choiceIsSelected ? ConsoleColor.Yellow : ConsoleColor.Red);
                     else
-                    {
                         ConsoleHelper.ColorWrite($"   [{choice.Key}]", choiceIsSelected ? ConsoleColor.Green : seatIsTaken ? ConsoleColor.DarkRed : ConsoleColor.White);
-                    }
                 }
                 Console.WriteLine();
             }
