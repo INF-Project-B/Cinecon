@@ -8,6 +8,7 @@ namespace Cinecon
     {
         private static List<KeyValuePair<string, Action>> _genres;
         private static KeyValuePair<string, string[]> _dayAndTimes;
+        private static List<Seat> SelectedSeats { get; set; }
 
         public static void ShowVisitorMenu()
         {
@@ -102,9 +103,22 @@ namespace Cinecon
                 }
                 seats.Add(row);
             }
-            var seatChoiceMenu = new ChoiceMenu(seats, text, ConsoleColor.Yellow);
+
+            var seatsBackChoice = new Dictionary<string, Action>();
+            var seatsNextChoice = new Dictionary<string, Action>();
+            seatsBackChoice["Terug"] = ShowFilms;
+            seatsNextChoice["Ga door"] = null;
+            seats.Add(seatsBackChoice);
+            seats.Add(seatsNextChoice);
+
+            var seatChoiceMenu = new ChoiceMenu(seats, true,  text, ConsoleColor.Yellow);
 
             var seatChoices = seatChoiceMenu.MakeAllChoice(room: room);
+
+            if (seatChoices.Item1 == "Terug")
+                ShowFilmInfo(movie.Title);
+            if (seatChoices.Item1 == "Ga door")
+                ShowFilms();
         }
 
         private static void ShowFilters()
