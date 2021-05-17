@@ -21,8 +21,9 @@ namespace Cinecon
             _textColor = textColor;
         }
 
-        public ChoiceMenu(List<Dictionary<string, Action>> twodChoices, string text = null, ConsoleColor textColor = ConsoleColor.White)
+        public ChoiceMenu(List<Dictionary<string, Action>> twodChoices, bool addBackChoice, string text = null, ConsoleColor textColor = ConsoleColor.White)
         {
+
             _2dChoices = twodChoices.Select(x => x.ToList()).ToList();
             _text = text;
             _textColor = textColor;
@@ -123,7 +124,7 @@ namespace Cinecon
             }
         }
 
-        public List<List<KeyValuePair<string, Action>>> MakeAllChoice(List<List<KeyValuePair<string, Action>>> preselectedGenres = null, Room room = null)
+        public Tuple<string, List<Seat>> MakeAllChoice(List<List<KeyValuePair<string, Action>>> preselectedGenres = null, Room room = null)
         {
             Console.CursorVisible = false;
             WriteAllMenu(0, 0, room: room);
@@ -150,7 +151,7 @@ namespace Cinecon
                 {
                     case ConsoleKey.LeftArrow:
                         if (indexX - 1 >= 0)
-                            indexX -= 1;
+                            indexX--;
                         else
                         {
                             indexX = _2dChoices[indexY].Count - 1;
@@ -160,7 +161,7 @@ namespace Cinecon
                         break;
                     case ConsoleKey.RightArrow:
                         if (indexX + 1 < _2dChoices[indexY].Count)
-                            indexX += 1;
+                            indexX++;
                         else
                         {
                             indexX = 0;
@@ -169,11 +170,21 @@ namespace Cinecon
                         WriteAllMenu(indexY, indexX, choices, room: room);
                         break;
                     case ConsoleKey.DownArrow:
-                        indexY = indexY + 1 < _2dChoices.Count ? indexY + 1 : 0;
+                        
+                        if (indexY + 1 < _2dChoices.Count)
+                        {
+                            indexX = indexY + 1 == _2dChoices.Count-2 ? 0 : indexX;
+                            indexY++;
+                        }
+                        else
+                        {
+                            indexY = 0;
+                            indexX = 0;
+                        }
                         WriteAllMenu(indexY, indexX, choices, room: room);
                         break;
                     case ConsoleKey.UpArrow:
-                        indexY = indexY - 1 >= 0 ? indexY - 1 : _2dChoices.Count - 1;
+                        indexY = indexY - 1 >= 0 ? indexY - 1 : indexX == 0 ? _2dChoices.Count - 1 : _2dChoices.Count - 3;
                         WriteAllMenu(indexY, indexX,  choices, room: room);
                         break;
                     case ConsoleKey.Enter:
@@ -181,21 +192,17 @@ namespace Cinecon
                         if (new[] { "Terug", "Ga door" }.Any(x => x == choice.Key))
                         {
                             Console.Clear();
-                            return allChoices;
+                            return Tuple.Create(choice.Key, room.Seats.Intersect(choices.Select(x => new Seat { IsTaken = true, Row = x.Key[0].ToString(), Number = int.Parse(x.Key.Substring(1)) })).ToList());
                         }
-                        if (!choices.Contains(choice))
+                        if (!choices.Contains(choice) && !room.Seats.FirstOrDefault(x => $"{ x.Row}{ (x.Number < 10 ? "0" : "")}{ x.Number}" == choice.Key).IsTaken)
                             choices.Add(choice);
                         else
                             choices.Remove(choice);
                         WriteAllMenu(indexY, indexX, choices, room: room);
                         break;
                     case ConsoleKey.Backspace:
-                        if (_choices.Any(x => x.Key == "Terug" || x.Key == "Ga door"))
-                        {
-                            Console.Clear();
-                            return allChoices;
-                        }
-                        break;
+                        Console.Clear();
+                        return Tuple.Create(_2dChoices[indexY][indexX].Key, room.Seats.Intersect(choices.Select(x => new Seat { IsTaken = true, Row = x.Key[0].ToString(), Number = int.Parse(x.Key.Substring(1)) })).ToList()); ;
                 }
             }
         }
@@ -212,17 +219,23 @@ namespace Cinecon
             {
                 foreach (var choice in row)
                 {
-                    if (new[] { "Terug", "Exit" }.Any(x => x == choice.Key))
-                        Console.WriteLine();
-
+                    bool seatIsTaken;
                     bool choiceIsSelected = selectedChoices != null && selectedChoices.Contains(choice);
-
-                    var seatIsTaken = room.Seats.FirstOrDefault(x => $"{ x.Row}{ (x.Number < 10 ? "0" : "")}{ x.Number}" == choice.Key).IsTaken;
-
-                    if (choice.Key == _2dChoices[indexY].ElementAt(indexX).Key)
-                        ConsoleHelper.ColorWrite($"   [{choice.Key}]", choiceIsSelected ? ConsoleColor.Yellow : ConsoleColor.Red);
+                    if (new[] { "Terug", "Ga door" }.Any(x => x == choice.Key))
+                    {
+                        Console.WriteLine();
+                        seatIsTaken = false;
+                        ConsoleHelper.ColorWrite($"   {choice.Key}", choice.Key == _2dChoices[indexY].ElementAt(indexX).Key ? ConsoleColor.Red : ConsoleColor.White);
+                    }
                     else
-                        ConsoleHelper.ColorWrite($"   [{choice.Key}]", choiceIsSelected ? ConsoleColor.Green : seatIsTaken ? ConsoleColor.DarkRed : ConsoleColor.White);
+                    {
+                        seatIsTaken = room.Seats.FirstOrDefault(x => $"{ x.Row}{ (x.Number < 10 ? "0" : "")}{ x.Number}" == choice.Key).IsTaken;
+
+                        if (choice.Key == _2dChoices[indexY].ElementAt(indexX).Key)
+                            ConsoleHelper.ColorWrite($"   [{choice.Key}]", choiceIsSelected && !seatIsTaken ? ConsoleColor.Yellow : ConsoleColor.Red);
+                        else
+                            ConsoleHelper.ColorWrite($"   [{choice.Key}]", choiceIsSelected && !seatIsTaken ? ConsoleColor.Green : seatIsTaken ? ConsoleColor.DarkRed : ConsoleColor.White);
+                    }
                 }
                 Console.WriteLine();
             }
