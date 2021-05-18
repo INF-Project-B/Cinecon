@@ -10,8 +10,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Assets\email.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Assets\menu.json">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
     <None Update="Assets\movies.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
