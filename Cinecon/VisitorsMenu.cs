@@ -281,8 +281,8 @@ namespace Cinecon
             ConsoleHelper.LogoType = LogoType.Films;
             ConsoleHelper.Breadcrumb = $"Films / {movie.Title} / Koop tickets / Betaling";
 
-            var name = "";
-            var email = "";
+            string name;
+            string email;
 
             do
             {
