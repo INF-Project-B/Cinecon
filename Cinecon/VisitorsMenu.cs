@@ -133,7 +133,7 @@ namespace Cinecon
 
             var dayChoiceMenu = new ChoiceMenu(dayOptions, true);
 
-            var dayChoice = dayChoiceMenu.MakeChoice();
+            var dayChoice = dayChoiceMenu.MakeChoice(_dayAndTimes.Key != null ? new[] { _dayAndTimes.Key } : null);
 
             if (dayChoice.Key == "Terug")
                 ShowFilters();
