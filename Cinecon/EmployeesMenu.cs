@@ -29,7 +29,7 @@ namespace Cinecon
         {
             var reservationCodes = new Dictionary<string, Action>();
             
-            foreach (var reservations in JsonHelper.Reservations)
+            foreach (var reservations in JsonHelper.ReservationData.Reservations)
                 reservationCodes[reservations.Code] = null;
 
             var reservationsCodeChoice = new ChoiceMenu(reservationCodes, addBackChoice: true).MakeChoice();
@@ -37,14 +37,15 @@ namespace Cinecon
             if (reservationsCodeChoice.Key == "Terug")
                 ShowEmployeesMenu();
             else
-                ShowCodeInfo(JsonHelper.Reservations.FirstOrDefault(x => x.Code == reservationsCodeChoice.Key));
+                ShowCodeInfo(JsonHelper.ReservationData.Reservations.FirstOrDefault(x => x.Code == reservationsCodeChoice.Key));
         }
 
         private static void ShowCodeInfo(Reservation reservation)
         {
             var reservationDescription = $"   Code {reservation.Code} is {(reservation.IsActivated ? "actief" : "inactief")}\n" +
-                $"   Er is betaald met {reservation.PaymentMethod}.\n   {(reservation.Seats.Count > 1 ? "Stoelen: " : "Stoel: ")}" +
-                string.Join(", ", reservation.Seats.Select(x => $"{x.Row}{x.Number}")) + ".\n";
+                $"   Betalingsmethode: {reservation.PaymentMethod}\n   {(reservation.Seats.Count > 1 ? "Stoelen: " : "Stoel: ")}" +
+                string.Join(", ", reservation.Seats.Select(x => $"{x.Row}{x.Number}")) + "\n" +
+                $"   Naam: {reservation.Name}\n   E-mail: {reservation.Email}\n";
 
             var backChoice = new ChoiceMenu(new Dictionary<string, Action>
             {

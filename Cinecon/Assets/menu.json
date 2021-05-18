@@ -1,16 +1,16 @@
 ﻿{
     "Popcorn": {
-        "Zout": {
+        "Popcorn zout": {
             "Klein": 3.50,
             "Medium": 4.50,
             "Groot": 5.00
         },
-        "Zoet": {
+        "Popcorn zoet": {
             "Klein": 3.50,
             "Medium": 4.50,
             "Groot": 5.00
         },
-        "Karamel": {
+        "Popcorn karamel": {
             "Klein": 3.50,
             "Medium": 4.50,
             "Groot": 5.00
