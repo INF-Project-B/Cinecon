@@ -1,42 +1,52 @@
-[
-    {
-        "code": "SZHD7",
-        "is_activated": false,
-        "payment_method": "ideal",
-        "seats": [
-            {
-                "row": "A",
-                "number": 1
-            },
-            {
-                "row": "B",
-                "number": 8
-            }
-        ],
-        "total_price": 20.0
-    },
-    {
-        "code": "RJF6",
-        "is_activated": false,
-        "payment_method": "paypal",
-        "seats": [
-            {
-                "row": "A",
-                "number": 2
-            }
-        ],
-        "total_price": 15.0
-    },
-    {
-        "code": "BMX54",
-        "is_activated": false,
-        "payment_method": "creditcard",
-        "seats": [
-            {
-                "row": "A",
-                "number": 3
-            }
-        ],
-        "total_price": 10.0
-    }
-]
+{
+    "payment_methods": [ "iDeal", "PayPal", "Credit Card" ],
+
+    "reservations": [
+        {
+            "code": "SZHD7",
+            "name": "Hayk",
+            "email": "h@ykmarkarian.com",
+            "is_activated": false,
+            "payment_method": "iDeal",
+            "seats": [
+                {
+                    "row": "A",
+                    "number": 1
+                },
+                {
+                    "row": "B",
+                    "number": 8
+                }
+            ],
+            "total_price": 20.0
+        },
+        {
+            "code": "RJF6",
+            "name": "Arian",
+            "email": "test@test.nl",
+            "is_activated": false,
+            "payment_method": "PayPal",
+            "seats": [
+                {
+                    "row": "A",
+                    "number": 2
+                }
+            ],
+            "total_price": 15.0
+        },
+        {
+            "code": "BMX54",
+            "name": "Nuur",
+            "email": "test@test.nl",
+            "is_activated": false,
+            "payment_method": "Credit Card",
+            "seats": [
+                {
+                    "row": "A",
+                    "number": 3
+                }
+            ],
+            "total_price": 10.0
+        }
+    ]
+}

@@ -10,6 +10,7 @@ namespace Cinecon
         private readonly List<KeyValuePair<string, Action>> _choices;
         private readonly string _text;
         private readonly ConsoleColor _textColor;
+        private string[] _highlighted;
 
         public ChoiceMenu(Dictionary<string, Action> choices, bool addBackChoice = false, string text = null, ConsoleColor textColor = ConsoleColor.White)
         {
@@ -44,8 +45,10 @@ namespace Cinecon
             WriteMenu(0, preselected);
         }
 
-        public KeyValuePair<string, Action> MakeChoice()
+        public KeyValuePair<string, Action> MakeChoice(string[] highlighted = null)
         {
+            _highlighted = highlighted;
+
             ChoiceSetup();
 
             int index = 0;
@@ -78,13 +81,13 @@ namespace Cinecon
             }
         }
 
-        public List<KeyValuePair<string, Action>> MakeMultipleChoice(List<KeyValuePair<string, Action>> preselectedGenres = null)
+        public List<KeyValuePair<string, Action>> MakeMultipleChoice(List<KeyValuePair<string, Action>> preselected = null)
         {
-            ChoiceSetup(preselectedGenres);
+            ChoiceSetup(preselected);
 
             int index = 0;
 
-            var choices = preselectedGenres ?? new List<KeyValuePair<string, Action>>();
+            var choices = preselected ?? new List<KeyValuePair<string, Action>>();
 
             while (true)
             {
@@ -251,14 +254,15 @@ namespace Cinecon
             
             foreach (var choice in _choices)
             {
-                if (new[] { "Terug", "Exit", "Filters" }.Any(x => x == choice.Key))
+                if (new[] { "Terug", "Exit", "Ga door", "Winkelmand legen" }.Any(x => x == choice.Key))
                     Console.WriteLine();
 
                 bool choiceIsSelected = selectedChoices != null && selectedChoices.Contains(choice);
+                bool isHighighted = _highlighted?.Contains(choice.Key) ?? false;
 
                 if (choice.Key == _choices.ElementAt(index).Key)
                 {
-                    if (choiceIsSelected)
+                    if (choiceIsSelected || isHighighted)
                     {
                         ConsoleHelper.ColorWrite($" > ", ConsoleColor.Red);
                         ConsoleHelper.ColorWrite(choice.Key + "\n", ConsoleColor.Green);
@@ -268,16 +272,14 @@ namespace Cinecon
                 }
                 else
                 {
-                    if (choice.Key == "Filters")
-                        ConsoleHelper.ColorWriteLine($"   {choice.Key}", ConsoleColor.Yellow);
+                    if (choiceIsSelected || isHighighted)
+                        ConsoleHelper.ColorWriteLine($"   {choice.Key}", ConsoleColor.Green);
                     else
-                    {
-                        if (choiceIsSelected)
-                            ConsoleHelper.ColorWriteLine($"   {choice.Key}", ConsoleColor.Green);
-                        else
-                            Console.WriteLine($"   {choice.Key}");
-                    }
+                        Console.WriteLine($"   {choice.Key}");
                 }
+
+                if (choice.Key == "Filters")
+                    Console.WriteLine();
             }
         }
     }
