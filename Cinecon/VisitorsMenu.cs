@@ -118,8 +118,8 @@ namespace Cinecon
                 seats.Add(row);
             }
 
-            seats.Add(new Dictionary<string, Action> { { "Terug", ShowFilms } });
-            seats.Add(new Dictionary<string, Action> { { "Ga door", null } });
+            seats.Add(new Dictionary<string, Action> { { "Ga door", ShowFilms } });
+            seats.Add(new Dictionary<string, Action> { { "Terug", null } });
 
             var seatChoiceMenu = new ChoiceMenu(seats, true, $"   Zaal: {room.Number}\n   Kies aub x aantal stoelen door op enter te drukken\n", ConsoleColor.Yellow);
 
