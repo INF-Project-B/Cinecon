@@ -361,7 +361,7 @@ namespace Cinecon
 
         private static string GenerateRandomCode()
         {
-            var randomCode = "";
+            string randomCode;
             var r = new Random();
             var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
