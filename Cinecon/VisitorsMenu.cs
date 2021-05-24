@@ -106,7 +106,7 @@ namespace Cinecon
         {
             var room = JsonHelper.Rooms.FirstOrDefault(x => x.Number == movie.Room);
 
-            var text = "   U mag kiezen uit de volgende zitplaatsen:\n";
+            var text = $"   Zaal: {room.Number}\n   Kies aub x aantal stoelen door op enter te drukken:\n";
 
             var seats = new List<Dictionary<string, Action>>();
 
@@ -124,10 +124,12 @@ namespace Cinecon
 
             var seatsBackChoice = new Dictionary<string, Action>();
             var seatsNextChoice = new Dictionary<string, Action>();
+
             seatsBackChoice["Terug"] = ShowFilms;
             seatsNextChoice["Ga door"] = null;
-            seats.Add(seatsBackChoice);
+
             seats.Add(seatsNextChoice);
+            seats.Add(seatsBackChoice);
 
             var seatChoiceMenu = new ChoiceMenu(seats, true,  text, ConsoleColor.Yellow);
 
