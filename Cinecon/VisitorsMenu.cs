@@ -12,8 +12,6 @@ namespace Cinecon
     {
         private static List<KeyValuePair<string, Action>> _genres;
         private static KeyValuePair<string, string[]> _dayAndTimes;
-        private static List<Seat> SelectedSeats { get; set; }
-
         private static readonly List<KeyValuePair<string, decimal>> _menuCart = new List<KeyValuePair<string, decimal>>();
         private static string MenuCartText 
         { 
