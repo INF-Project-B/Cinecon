@@ -350,7 +350,7 @@ namespace Cinecon
 
             JsonHelper.UpdateJsonFiles();
 
-            Task.Run(() => SendReservationEmail(reservation));
+            _ = Task.Run(() => SendReservationEmail(reservation));
 
             new ChoiceMenu(new Dictionary<string, Action>
             {
