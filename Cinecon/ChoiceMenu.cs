@@ -152,7 +152,7 @@ namespace Cinecon
                         Console.WriteLine($"   {choice.Key}");
                 }
 
-                if (choice.Key == "Filters")
+                if (choice.Key == "Filters" || choice.Key == "Zaal toevoegen")
                     Console.WriteLine();
             }
         }
