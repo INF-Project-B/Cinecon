@@ -12,7 +12,6 @@ namespace Cinecon
     {
         private static List<KeyValuePair<string, Action>> _genres;
         private static KeyValuePair<string, string[]> _dayAndTimes;
-
         private static readonly List<KeyValuePair<string, decimal>> _menuCart = new List<KeyValuePair<string, decimal>>();
         private static string MenuCartText 
         { 
@@ -90,12 +89,45 @@ namespace Cinecon
 
             var filmChoiceMenu = new ChoiceMenu(new Dictionary<string, Action>
             {
-                { "Koop tickets", null },
+                { "Koop tickets", null }
             }, addBackChoice: true, text);
 
             var filmChoice = filmChoiceMenu.MakeChoice();
 
             if (filmChoice.Key == "Terug")
+                ShowFilms();
+            else
+                ShowSeats(movie);
+        }
+
+        private static void ShowSeats(Movie movie)
+        {
+            var room = JsonHelper.Rooms.FirstOrDefault(x => x.Number == movie.Room);
+
+            var seats = new List<Dictionary<string, Action>>();
+
+            var seatNumber = 0;
+            for (int i = 0; i < room.TotalRows; i++)
+            {
+                var row = new Dictionary<string, Action>();
+                for (int j = 0; j < room.SeatsPerRow; j++)
+                {
+                    row[$"{room.Seats[seatNumber].Row}{(room.Seats[seatNumber].Number < 10 ? "0" : "")}{room.Seats[seatNumber].Number}"] = null;
+                    seatNumber++;
+                }
+                seats.Add(row);
+            }
+
+            seats.Add(new Dictionary<string, Action> { { "Terug", ShowFilms } });
+            seats.Add(new Dictionary<string, Action> { { "Ga door", null } });
+
+            var seatChoiceMenu = new ChoiceMenu(seats, true, $"   Zaal: {room.Number}\n   Kies aub x aantal stoelen door op enter te drukken\n", ConsoleColor.Yellow);
+
+            var seatChoices = seatChoiceMenu.MakeAllChoice(room: room);
+
+            if (seatChoices.Item1 == "Terug")
+                ShowFilmInfo(movie.Title);
+            if (seatChoices.Item1 == "Ga door")
                 ShowFilms();
         }
 

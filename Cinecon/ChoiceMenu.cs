@@ -6,6 +6,7 @@ namespace Cinecon
 {
     public class ChoiceMenu
     {
+        private readonly List<List<KeyValuePair<string, Action>>> _2dChoices;
         private readonly List<KeyValuePair<string, Action>> _choices;
         private readonly string _text;
         private readonly ConsoleColor _textColor;
@@ -17,6 +18,14 @@ namespace Cinecon
                 choices["Terug"] = null;
 
             _choices = choices.ToList();
+            _text = text;
+            _textColor = textColor;
+        }
+
+        public ChoiceMenu(List<Dictionary<string, Action>> twodChoices, bool addBackChoice, string text = null, ConsoleColor textColor = ConsoleColor.White)
+        {
+
+            _2dChoices = twodChoices.Select(x => x.ToList()).ToList();
             _text = text;
             _textColor = textColor;
         }
@@ -115,6 +124,154 @@ namespace Cinecon
                         }
                         break;
                 }
+            }
+        }
+
+        public Tuple<string, List<Seat>> MakeAllChoice(List<List<KeyValuePair<string, Action>>> preselectedGenres = null, Room room = null)
+        {
+            Console.CursorVisible = false;
+            WriteAllMenu(0, 0, room: room);
+
+            int indexY = 0;
+
+            int indexX = 0;
+
+            var allChoices = preselectedGenres ?? new List<List<KeyValuePair<string, Action>>>();
+
+            var choices = new List<KeyValuePair<string, Action>>();
+
+            var count = 0;
+
+            foreach (var row in allChoices)
+                foreach (var collumn in row)
+                    choices[count++] = allChoices[allChoices.IndexOf(row)][row.IndexOf(collumn)];
+
+            while (true)
+            {
+                Console.CursorTop = 0;
+
+                switch (Console.ReadKey(true).Key)
+                {
+                    case ConsoleKey.LeftArrow:
+                        if (indexX - 1 >= 0)
+                            indexX--;
+                        else
+                        {
+                            indexX = _2dChoices[indexY].Count - 1;
+                            indexY = indexY - 1 >= 0 ? indexY - 1 : 0;
+                        }
+                        WriteAllMenu(indexY, indexX, choices, room: room);
+                        break;
+                    case ConsoleKey.RightArrow:
+                        if (indexX + 1 < _2dChoices[indexY].Count)
+                            indexX++;
+                        else
+                        {
+                            indexX = 0;
+                            indexY = indexY + 1 < _2dChoices.Count ? indexY + 1 : _2dChoices.Count - 1;
+                        }
+                        WriteAllMenu(indexY, indexX, choices, room: room);
+                        break;
+                    case ConsoleKey.DownArrow:
+                        
+                        if (indexY + 1 < _2dChoices.Count)
+                        {
+                            indexX = indexY + 1 == _2dChoices.Count-2 ? 0 : indexX;
+                            indexY++;
+                        }
+                        else
+                        {
+                            indexY = 0;
+                            indexX = 0;
+                        }
+                        WriteAllMenu(indexY, indexX, choices, room: room);
+                        break;
+                    case ConsoleKey.UpArrow:
+                        indexY = indexY - 1 >= 0 ? indexY - 1 : indexX == 0 ? _2dChoices.Count - 1 : _2dChoices.Count - 3;
+                        WriteAllMenu(indexY, indexX,  choices, room: room);
+                        break;
+                    case ConsoleKey.Enter:
+                        var choice = _2dChoices[indexY][indexX];
+                        if (new[] { "Terug" }.Any(x => x == choice.Key))
+                        {
+                            Console.Clear();
+                            return Tuple.Create(choice.Key, room.Seats);
+                        }
+                        if (new[] { "Ga door" }.Any(x => x == choice.Key))
+                        {
+                            if (choices.Count != 5)
+                            {
+                                WriteAllMenu(indexY, indexX, choices, room: room, false);
+                            }
+                            else
+                            {
+                                Console.Clear();
+                                return Tuple.Create(choice.Key, room.Seats.Intersect(choices.Select(x => new Seat { IsTaken = true, Row = x.Key[0].ToString(), Number = int.Parse(x.Key.Substring(1)) })).ToList());
+                            }
+                        }
+                        else
+                        {
+                            if (!choices.Contains(choice) && !room.Seats.FirstOrDefault(x => $"{ x.Row}{ (x.Number < 10 ? "0" : "")}{ x.Number}" == choice.Key).IsTaken)
+                                choices.Add(choice);
+                            else
+                                choices.Remove(choice);
+                            if (!room.Seats.FirstOrDefault(x => $"{ x.Row}{ (x.Number < 10 ? "0" : "")}{ x.Number}" == choice.Key).IsTaken)
+                            {
+                                WriteAllMenu(indexY, indexX, choices, room: room, takenSeat: room.Seats.FirstOrDefault(x => $"{ x.Row}{ (x.Number < 10 ? "0" : "")}{ x.Number}" == choice.Key).IsTaken);
+                                Console.Clear();
+                            }
+                            WriteAllMenu(indexY, indexX, choices, room: room, takenSeat: room.Seats.FirstOrDefault(x => $"{ x.Row}{ (x.Number < 10 ? "0" : "")}{ x.Number}" == choice.Key).IsTaken);
+                        }
+                        break;
+                    case ConsoleKey.Backspace:
+                        Console.Clear();
+                        return Tuple.Create("Terug", room.Seats);
+                }
+            }
+        }
+        
+        private void WriteAllMenu(int indexY, int indexX, List<KeyValuePair<string, Action>> selectedChoices = null, Room room = null, bool seatsAmount = true, bool takenSeat = false)
+        {
+            ConsoleHelper.WriteLogo(ConsoleColor.Red);
+            ConsoleHelper.WriteBreadcrumb();
+
+            if (!string.IsNullOrEmpty(_text))
+                ConsoleHelper.ColorWriteLine(_text, _textColor);
+
+            foreach (var row in _2dChoices)
+            {
+                foreach (var choice in row)
+                {
+                    bool seatIsTaken = false;
+                    bool choiceIsSelected = selectedChoices != null && selectedChoices.Contains(choice);
+                    if (new[] { "Terug", "Ga door" }.Any(x => x == choice.Key))
+                    {
+                        Console.WriteLine();
+                        ConsoleHelper.ColorWrite(choice.Key == _2dChoices[indexY].ElementAt(indexX).Key ? $" > {choice.Key}" : $"   {choice.Key}", choice.Key == _2dChoices[indexY].ElementAt(indexX).Key ? ConsoleColor.Red : ConsoleColor.White);
+                    }
+                    else
+                    {
+                        seatIsTaken = room.Seats.FirstOrDefault(x => $"{ x.Row}{ (x.Number < 10 ? "0" : "")}{ x.Number}" == choice.Key).IsTaken;
+
+                        if (choice.Key == _2dChoices[indexY].ElementAt(indexX).Key)
+                            ConsoleHelper.ColorWrite($"   [{choice.Key}]", choiceIsSelected && !seatIsTaken ? ConsoleColor.Yellow : ConsoleColor.Red);
+                        else
+                            ConsoleHelper.ColorWrite($"   [{choice.Key}]", choiceIsSelected && !seatIsTaken ? ConsoleColor.Green : seatIsTaken ? ConsoleColor.DarkRed : ConsoleColor.White);
+                    }
+                    if (new[] { "Terug" }.Any(x => x == choice.Key) && !seatsAmount)
+                    {
+                        Console.WriteLine();
+                        Console.WriteLine();
+                        ConsoleHelper.ColorWriteLine("   Kies aub het aantal stoelen dat u hebt aangegeven door op enter te drukken", ConsoleColor.Red);
+                    }
+                    if (new[] { "Terug" }.Any(x => x == choice.Key) && takenSeat)
+                    {
+                        Console.WriteLine();
+                        Console.WriteLine();
+                        ConsoleHelper.ColorWriteLine("   Kies aub een stoel die niet bezet is.", ConsoleColor.Red);
+                    }
+                }
+                Console.WriteLine();
             }
         }
 
