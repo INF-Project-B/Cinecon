@@ -285,7 +285,7 @@ namespace Cinecon
             
             foreach (var choice in _choices)
             {
-                if (new[] { "Terug", "Exit", "Ga door", "Winkelmand legen" }.Any(x => x == choice.Key))
+                if (new[] { "Terug", "Exit", "Ga door", "Winkelmand legen"}.Any(x => x == choice.Key))
                     Console.WriteLine();
 
                 bool choiceIsSelected = selectedChoices != null && selectedChoices.Contains(choice);
@@ -308,8 +308,7 @@ namespace Cinecon
                     else
                         Console.WriteLine($"   {choice.Key}");
                 }
-
-                if (choice.Key == "Filters" || choice.Key == "Zaal toevoegen")
+                if (new[] { "Terug", "Filters", "Zaal toevoegen" }.Any(x => x == choice.Key))
                     Console.WriteLine();
             }
         }
