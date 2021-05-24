@@ -192,25 +192,45 @@ namespace Cinecon
                         break;
                     case ConsoleKey.Enter:
                         var choice = _2dChoices[indexY][indexX];
-                        if (new[] { "Terug", "Ga door" }.Any(x => x == choice.Key))
+                        if (new[] { "Terug" }.Any(x => x == choice.Key))
                         {
                             Console.Clear();
-                            return Tuple.Create(choice.Key, room.Seats.Intersect(choices.Select(x => new Seat { IsTaken = true, Row = x.Key[0].ToString(), Number = int.Parse(x.Key.Substring(1)) })).ToList());
+                            return Tuple.Create(choice.Key, room.Seats);
                         }
-                        if (!choices.Contains(choice) && !room.Seats.FirstOrDefault(x => $"{ x.Row}{ (x.Number < 10 ? "0" : "")}{ x.Number}" == choice.Key).IsTaken)
-                            choices.Add(choice);
+                        if (new[] { "Ga door" }.Any(x => x == choice.Key))
+                        {
+                            if (choices.Count != 5)
+                            {
+                                WriteAllMenu(indexY, indexX, choices, room: room, false);
+                            }
+                            else
+                            {
+                                Console.Clear();
+                                return Tuple.Create(choice.Key, room.Seats.Intersect(choices.Select(x => new Seat { IsTaken = true, Row = x.Key[0].ToString(), Number = int.Parse(x.Key.Substring(1)) })).ToList());
+                            }
+                        }
                         else
-                            choices.Remove(choice);
-                        WriteAllMenu(indexY, indexX, choices, room: room);
+                        {
+                            if (!choices.Contains(choice) && !room.Seats.FirstOrDefault(x => $"{ x.Row}{ (x.Number < 10 ? "0" : "")}{ x.Number}" == choice.Key).IsTaken)
+                                choices.Add(choice);
+                            else
+                                choices.Remove(choice);
+                            if (!room.Seats.FirstOrDefault(x => $"{ x.Row}{ (x.Number < 10 ? "0" : "")}{ x.Number}" == choice.Key).IsTaken)
+                            {
+                                WriteAllMenu(indexY, indexX, choices, room: room, takenSeat: room.Seats.FirstOrDefault(x => $"{ x.Row}{ (x.Number < 10 ? "0" : "")}{ x.Number}" == choice.Key).IsTaken);
+                                Console.Clear();
+                            }
+                            WriteAllMenu(indexY, indexX, choices, room: room, takenSeat: room.Seats.FirstOrDefault(x => $"{ x.Row}{ (x.Number < 10 ? "0" : "")}{ x.Number}" == choice.Key).IsTaken);
+                        }
                         break;
                     case ConsoleKey.Backspace:
                         Console.Clear();
-                        return Tuple.Create(_2dChoices[indexY][indexX].Key, room.Seats.Intersect(choices.Select(x => new Seat { IsTaken = true, Row = x.Key[0].ToString(), Number = int.Parse(x.Key.Substring(1)) })).ToList()); ;
+                        return Tuple.Create("Terug", room.Seats);
                 }
             }
         }
         
-        private void WriteAllMenu(int indexY, int indexX, List<KeyValuePair<string, Action>> selectedChoices = null, Room room = null)
+        private void WriteAllMenu(int indexY, int indexX, List<KeyValuePair<string, Action>> selectedChoices = null, Room room = null, bool seatsAmount = true, bool takenSeat = false)
         {
             ConsoleHelper.WriteLogo(ConsoleColor.Red);
             ConsoleHelper.WriteBreadcrumb();
@@ -222,13 +242,12 @@ namespace Cinecon
             {
                 foreach (var choice in row)
                 {
-                    bool seatIsTaken;
+                    bool seatIsTaken = false;
                     bool choiceIsSelected = selectedChoices != null && selectedChoices.Contains(choice);
                     if (new[] { "Terug", "Ga door" }.Any(x => x == choice.Key))
                     {
                         Console.WriteLine();
-                        seatIsTaken = false;
-                        ConsoleHelper.ColorWrite($"   {choice.Key}", choice.Key == _2dChoices[indexY].ElementAt(indexX).Key ? ConsoleColor.Red : ConsoleColor.White);
+                        ConsoleHelper.ColorWrite(choice.Key == _2dChoices[indexY].ElementAt(indexX).Key ? $" > {choice.Key}" : $"   {choice.Key}", choice.Key == _2dChoices[indexY].ElementAt(indexX).Key ? ConsoleColor.Red : ConsoleColor.White);
                     }
                     else
                     {
@@ -238,6 +257,18 @@ namespace Cinecon
                             ConsoleHelper.ColorWrite($"   [{choice.Key}]", choiceIsSelected && !seatIsTaken ? ConsoleColor.Yellow : ConsoleColor.Red);
                         else
                             ConsoleHelper.ColorWrite($"   [{choice.Key}]", choiceIsSelected && !seatIsTaken ? ConsoleColor.Green : seatIsTaken ? ConsoleColor.DarkRed : ConsoleColor.White);
+                    }
+                    if (new[] { "Terug" }.Any(x => x == choice.Key) && !seatsAmount)
+                    {
+                        Console.WriteLine();
+                        Console.WriteLine();
+                        ConsoleHelper.ColorWriteLine("   Kies aub het aantal stoelen dat u hebt aangegeven door op enter te drukken", ConsoleColor.Red);
+                    }
+                    if (new[] { "Terug" }.Any(x => x == choice.Key) && takenSeat)
+                    {
+                        Console.WriteLine();
+                        Console.WriteLine();
+                        ConsoleHelper.ColorWriteLine("   Kies aub een stoel die niet bezet is.", ConsoleColor.Red);
                     }
                 }
                 Console.WriteLine();
