@@ -28,16 +28,64 @@ namespace Cinecon
         private static void ShowReservations()
         {
             var reservationCodes = new Dictionary<string, Action>();
-            
-            foreach (var reservations in JsonHelper.ReservationData.Reservations)
-                reservationCodes[reservations.Code] = null;
 
-            var reservationsCodeChoice = new ChoiceMenu(reservationCodes, addBackChoice: true).MakeChoice();
+            reservationCodes["Zoek op code"] = null;
+            reservationCodes["Terug"] = null;
 
-            if (reservationsCodeChoice.Key == "Terug")
+            var activatedCodes = new string[JsonHelper.ReservationData.Reservations.Count(x => x.IsActivated)];
+
+            var count = 0;
+            foreach (var reservation in JsonHelper.ReservationData.Reservations)
+            {
+                reservationCodes[reservation.Code] = null;
+                if (reservation.IsActivated)
+                    activatedCodes[count++] = reservation.Code;
+            }
+
+            var reservationsCodeChoice = new ChoiceMenu(reservationCodes, false, "   Geactiveerde codes worden met groen aangegeven.\n", ConsoleColor.Yellow).MakeChoice(activatedCodes);
+
+            if (reservationsCodeChoice.Key == "Zoek op code")
+                ShowSearchCode(reservationCodes);
+            else if (reservationsCodeChoice.Key == "Terug")
                 ShowEmployeesMenu();
             else
                 ShowCodeInfo(JsonHelper.ReservationData.Reservations.FirstOrDefault(x => x.Code == reservationsCodeChoice.Key));
+        }
+
+        private static void ShowSearchCode(Dictionary<string, Action> reservationCodes)
+        {
+            Console.CursorVisible = true;
+            ConsoleHelper.WriteLogoAndBreadcrumb();
+
+            var searchAgain = ChoiceMenu.CreateConfirmationChoiceMenu("   De ingevulde code was niet gevonden. Wilt u nog eens zoeken?\n");
+
+            string code;
+            while (true)
+            {
+                code = ConsoleHelper.ReadLineWithText("   Voer a.u.b. een code in met een lengte van 5 letters en/of getallen. -> ", writeLine: false);
+
+                if (reservationCodes.ContainsKey(code)) 
+                {
+                    Console.Clear();
+                    ShowCodeInfo(JsonHelper.ReservationData.Reservations.FirstOrDefault(x => x.Code == code));
+                    break;
+                } 
+                else if (code.Length != 5) 
+                {
+                    ConsoleHelper.WriteLogoAndBreadcrumb();
+                    ConsoleHelper.ColorWriteLine("   Vul a.u.b. een code in met een lengte van 5\n", ConsoleColor.Red);
+                } 
+                else 
+                {
+                    Console.Clear();
+                    var searchAgainChoice = searchAgain.MakeChoice();
+                    if (searchAgainChoice.Key == "Nee")
+                        ShowReservations();
+                    else
+                        ShowSearchCode(reservationCodes);
+                }
+            }
+            Console.CursorVisible = false;
         }
 
         private static void ShowCodeInfo(Reservation reservation)

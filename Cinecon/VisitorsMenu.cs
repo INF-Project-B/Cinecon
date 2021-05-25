@@ -85,7 +85,7 @@ namespace Cinecon
             
             var movie = JsonHelper.Movies.FirstOrDefault(x => x.Title == movieName);
 
-            var text = $"Titel: {movie.Title}\n\nOmschrijving: { movie.Description}\n\nZaal: {movie.Room}\n\n_______________________________________\n";       
+            var text = $"   Titel: {movie.Title}\n\n   Omschrijving: { movie.Description}\n\n   Zaal: {movie.Room}\n\n_______________________________________\n";       
 
             var filmChoiceMenu = new ChoiceMenu(new Dictionary<string, Action>
             {
@@ -118,10 +118,10 @@ namespace Cinecon
                 seats.Add(row);
             }
 
-            seats.Add(new Dictionary<string, Action> { { "Terug", ShowFilms } });
-            seats.Add(new Dictionary<string, Action> { { "Ga door", null } });
+            seats.Add(new Dictionary<string, Action> { { "Ga door", ShowFilms } });
+            seats.Add(new Dictionary<string, Action> { { "Terug", null } });
 
-            var seatChoiceMenu = new ChoiceMenu(seats, true, $"   Zaal: {room.Number}\n   Kies aub x aantal stoelen door op enter te drukken\n", ConsoleColor.Yellow);
+            var seatChoiceMenu = new ChoiceMenu(seats, $"   Zaal: {room.Number}\n   Kies a.u.b. x aantal stoelen door op enter te drukken\n", ConsoleColor.Yellow);
 
             var seatChoices = seatChoiceMenu.MakeAllChoice(room: room);
 

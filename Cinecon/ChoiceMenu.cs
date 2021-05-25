@@ -22,7 +22,7 @@ namespace Cinecon
             _textColor = textColor;
         }
 
-        public ChoiceMenu(List<Dictionary<string, Action>> twodChoices, bool addBackChoice, string text = null, ConsoleColor textColor = ConsoleColor.White)
+        public ChoiceMenu(List<Dictionary<string, Action>> twodChoices, string text = null, ConsoleColor textColor = ConsoleColor.White)
         {
 
             _2dChoices = twodChoices.Select(x => x.ToList()).ToList();
@@ -262,13 +262,13 @@ namespace Cinecon
                     {
                         Console.WriteLine();
                         Console.WriteLine();
-                        ConsoleHelper.ColorWriteLine("   Kies aub het aantal stoelen dat u hebt aangegeven door op enter te drukken", ConsoleColor.Red);
+                        ConsoleHelper.ColorWriteLine("   Kies a.u.b. het aantal stoelen dat u hebt aangegeven door op enter te drukken", ConsoleColor.Red);
                     }
                     if (new[] { "Terug" }.Any(x => x == choice.Key) && takenSeat)
                     {
                         Console.WriteLine();
                         Console.WriteLine();
-                        ConsoleHelper.ColorWriteLine("   Kies aub een stoel die niet bezet is.", ConsoleColor.Red);
+                        ConsoleHelper.ColorWriteLine("   Kies a.u.b. een stoel die niet bezet is.", ConsoleColor.Red);
                     }
                 }
                 Console.WriteLine();
@@ -285,7 +285,7 @@ namespace Cinecon
             
             foreach (var choice in _choices)
             {
-                if (new[] { "Terug", "Exit", "Ga door", "Winkelmand legen" }.Any(x => x == choice.Key))
+                if (new[] { "Terug", "Exit", "Ga door", "Winkelmand legen"}.Any(x => x == choice.Key))
                     Console.WriteLine();
 
                 bool choiceIsSelected = selectedChoices != null && selectedChoices.Contains(choice);
@@ -308,8 +308,7 @@ namespace Cinecon
                     else
                         Console.WriteLine($"   {choice.Key}");
                 }
-
-                if (choice.Key == "Filters" || choice.Key == "Zaal toevoegen")
+                if (new[] { "Terug", "Filters", "Zaal toevoegen" }.Any(x => x == choice.Key))
                     Console.WriteLine();
             }
         }
