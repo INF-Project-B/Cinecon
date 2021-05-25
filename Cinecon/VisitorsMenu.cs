@@ -201,7 +201,7 @@ namespace Cinecon
 
         }
 
-        public static void HowManyTickets(Movie movie, string day, string time, bool error = false) /// hier gaat r iets mis
+        public static void HowManyTickets(Movie movie, string day, string time, bool error = false) 
         {
             Console.Clear();
             ConsoleHelper.WriteLogo(ConsoleColor.Red);
@@ -209,32 +209,34 @@ namespace Cinecon
             ConsoleHelper.WriteBreadcrumb();
 
             
-            if (error)
-                Console.WriteLine("Kies opnieuw het AANTAL kaartjes!");
-            else
-                Console.Write("Type het gewenste aantal kaartjes: ");
-                var quantity = Console.ReadLine();
-
-
-            int count = RoomManagement.GetRoom(movie.Room).Seats.Count(x => !x.IsTaken);
-
-            if (!int.TryParse(quantity, out int num))
+            if (error == true)
             {
-                HowManyTickets(movie, day, time, true);
-                return;
-            }
-
-            int qty = int.Parse(quantity);
-
-            while (true)
-               if (num > count && num < 1)
+                Console.Write("   LET OP!\n   Het aantal kaartjes moet een GETAL zijn e!\n   Aantal kaarten: ");
+                var quantity = Console.ReadLine();
+                int count = RoomManagement.GetRoom(movie.Room).Seats.Count(x => !x.IsTaken);
+                if (!int.TryParse(quantity, out int num) || num < 1 || num > count)
                 {
                     HowManyTickets(movie, day, time, true);
                     return;
                 }
-                else
-                    break;
-                    ShowTicketMenu(movie, day, time, qty);
+                ShowTicketMenu(movie, day, time, num); 
+
+            }
+            else if (error == false) 
+            {
+                Console.Write("Type het gewenste aantal kaartjes: ");
+                var quantity = Console.ReadLine();
+                int count = RoomManagement.GetRoom(movie.Room).Seats.Count(x => !x.IsTaken);
+
+                if (!int.TryParse(quantity, out int num) || num < 1 || num > count )
+                {
+                    HowManyTickets(movie, day, time, true);
+                    return; 
+                }
+                ShowTicketMenu(movie, day, time, num);
+
+            }
+
         }
 
         public static void ShowTicketMenu(Movie movie, string day, string time, int tickets) // verbeteren.
