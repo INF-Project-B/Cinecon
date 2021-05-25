@@ -61,17 +61,21 @@ namespace Cinecon
             string code;
             while (true)
             {
-                code = ConsoleHelper.ReadLineWithText("   Voer aub een code in met een lengte van 5 letters en/of getallen: ->", writeLine: false);
+                code = ConsoleHelper.ReadLineWithText("   Voer aub een code in met een lengte van 5 letters en/of getallen: -> ", writeLine: false);
 
-                if (reservationCodes.ContainsKey(code)) {
+                if (reservationCodes.ContainsKey(code)) 
+                {
                     Console.Clear();
                     ShowCodeInfo(JsonHelper.ReservationData.Reservations.FirstOrDefault(x => x.Code == code));
                     break;
-                } else if (code.Length != 5) {
+                } 
+                else if (code.Length != 5) 
+                {
                     ConsoleHelper.WriteLogoAndBreadcrumb();
-
                     ConsoleHelper.ColorWriteLine("   Vul aub een code in met een lengte van 5\n", ConsoleColor.Red);
-                } else {
+                } 
+                else 
+                {
                     Console.Clear();
                     var searchAgainChoice = searchAgain.MakeChoice();
                     if (searchAgainChoice.Key == "Nee")
