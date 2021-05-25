@@ -53,14 +53,15 @@ namespace Cinecon
 
         private static void ShowSearchCode(Dictionary<string, Action> reservationCodes)
         {
+            Console.CursorVisible = true;
             ConsoleHelper.WriteLogoAndBreadcrumb();
 
-            var searchAgain = ChoiceMenu.CreateConfirmationChoiceMenu("   De ingevulde code was geen beschikbare code, wilt u het opnieuw proberen?\n");
+            var searchAgain = ChoiceMenu.CreateConfirmationChoiceMenu("   De ingevulde code was niet gevonden. Wilt u eens zoeken?\n");
 
             string code;
             while (true)
             {
-                code = ConsoleHelper.ReadLineWithText("   Voer aub een code in met een lengte van 5 letters en/of getallen: ", writeLine: false);
+                code = ConsoleHelper.ReadLineWithText("   Voer aub een code in met een lengte van 5 letters en/of getallen: ->", writeLine: false);
 
                 if (reservationCodes.ContainsKey(code)) {
                     Console.Clear();
@@ -78,8 +79,8 @@ namespace Cinecon
                     else
                         ShowSearchCode(reservationCodes);
                 }
-                    
             }
+            Console.CursorVisible = false;
         }
 
         private static void ShowCodeInfo(Reservation reservation)
