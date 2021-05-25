@@ -200,6 +200,27 @@ namespace Cinecon
                     break;
                     ShowTicketMenu(movie, day, time, qty);
         }
+        public static void ShowTicketMenu(Movie movie, string day, string time, int tickets) // verbeteren.
+        {
+            ConsoleHelper.LogoType = LogoType.Films;
+            ConsoleHelper.Breadcrumb = $"Films / {movie.Title} / {day.First().ToString().ToUpper() + day.Substring(1)} om {time} / Aantal";
+
+            var ticketChoiceMenu = new ChoiceMenu(new Dictionary<string, Action>
+            {
+                {"Akkoord", null }
+
+            }, addBackChoice: true);
+            Console.Clear();
+
+            var dealChoice = ticketChoiceMenu.MakeChoice();
+
+            if (dealChoice.Key == "Akkoord")
+                Seats.ChooseSeats(tickets);
+
+            else if (dealChoice.Key == "Terug")
+                HowManyTickets(movie, day, time);
+        }
+    private static void ShowFilters()
         {
             ConsoleHelper.LogoType = LogoType.Films;
             ConsoleHelper.Breadcrumb = "Films / Filters";
