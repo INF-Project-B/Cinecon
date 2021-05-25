@@ -34,8 +34,8 @@ namespace Cinecon
 
             var visitorsMenu = new ChoiceMenu(new Dictionary<string, Action>
             {
-                { "Films", ShowFilms },
-                { "Menu", ShowMenuConfirmation }
+                { "Ga naar Films", ShowFilms },
+                { "Bestel je snacks en dranken", ShowMenuConfirmation }
             }, addBackChoice: true);
 
             var visitorsMenuChoice = visitorsMenu.MakeChoice();
@@ -64,7 +64,6 @@ namespace Cinecon
                     continue;
                 movies[movie.Title] = null;
             }
-
 
             var movieMenu = new ChoiceMenu(movies, true);
 
@@ -97,7 +96,118 @@ namespace Cinecon
             if (filmChoice.Key == "Terug")
                 ShowFilms();
             else
+                ShowDateAndTime(movie);
+        }
+
+        
+        private static void ShowDateAndTime(Movie movie)
+        {
+            ConsoleHelper.LogoType = LogoType.Films;
+            ConsoleHelper.Breadcrumb = $"Films / {movie.Title}";
+
+            var dateMenu = new ChoiceMenu(new Dictionary<string, Action>
+            {
+                {"Dag en tijden", null},
+            }, addBackChoice: true);
+
+            var dateChoice = dateMenu.MakeChoice();
+
+            if (dateChoice.Key == "Dag en tijden")
+                ChooseFilmDays(movie);
+            else
+                ShowFilmInfo(movie.Title);
+        }
+
+        private static void ChooseFilmDays(Movie movie)
+        {
+            ConsoleHelper.LogoType = LogoType.Films;
+            ConsoleHelper.Breadcrumb = $"Films / {movie.Title} / Dagen & Tijden";
+
+            var listOfDays = new Dictionary<string,Action>();
+
+            foreach (var day in movie.Days.Where(x => x.Value.Any()))
+                listOfDays[day.Key.First().ToString().ToUpper() + day.Key.Substring(1)] = null;
+
+            var msg = listOfDays.Count > 0 ? "" : "Geen dagen gevonden.";
+            var dayChoiceMenu = new ChoiceMenu(listOfDays, true, msg);
+            var dayChoice = dayChoiceMenu.MakeChoice();
+
+            if (dayChoice.Key == "Terug")
+                ShowDateAndTime(movie);
+            else
+                ChooseFilmTime(movie, dayChoice.Key.ToLower());
+        }
+
+        private static void ChooseFilmTime(Movie movie, string day)
+        {
+            ConsoleHelper.LogoType = LogoType.Films;
+            ConsoleHelper.Breadcrumb = $"Films / {movie.Title} / Dagen & Tijden";
+
+            var listOfTimes = new Dictionary<string, Action>();
+            foreach (var time in movie.Days[day])
+                listOfTimes[time] = null;
+
+            var timeChoiceMenu = new ChoiceMenu(listOfTimes, true, listOfTimes.Count > 0 ? "" : "Geen tijden gevonden.");
+
+            var dayAndTime = new Dictionary<string, Action>();
+            if (_dayAndTimes.Value != null && _dayAndTimes.Key == day)
+            {
+                foreach (var time in _dayAndTimes.Value)
+                    dayAndTime[time] = null;
+            }
+
+            var dateChoice = timeChoiceMenu.MakeChoice();
+
+            if (dateChoice.Key == "Terug")
+                ChooseFilmDays(movie);
+            else
+                ChooseTicketsAmount(movie, day.ToString(), dateChoice.Key.ToString()); 
+        }        
+
+        private static void ChooseTicketsAmount(Movie movie, string day, string time, bool error = false) 
+        {
+            Console.CursorVisible = true;
+
+            Console.Clear();
+            ConsoleHelper.Breadcrumb = $"Films / {movie.Title} / {day.First().ToString().ToUpper() + day.Substring(1)} / {time} / Tickets";
+            ConsoleHelper.WriteLogoAndBreadcrumb();
+            
+            if (error)
+                ConsoleHelper.ColorWrite("   Vul graag een positief getal in binnen het aantal beschikbare stoelen.\n\n", ConsoleColor.Red);
+
+            Room room = RoomManagement.GetRoom(movie.Room);
+
+            Console.Write($"   Hoeveel tickets wil je bestellen? ({room.Seats.Count(x => !x.IsTaken)} beschikbaar) -> ");
+
+            int availableSeatsCount = room.Seats.Count(x => !x.IsTaken);
+
+            if (!int.TryParse(Console.ReadLine(), out int num) || num < 1 || num > availableSeatsCount)
+            {
+                ChooseTicketsAmount(movie, day, time, true);
+                return;
+            }
+
+            Console.CursorVisible = false;
+
+            ShowTicketMenu(movie, day, time, num);
+        }
+
+        private static void ShowTicketMenu(Movie movie, string day, string time, int ticketsAmount)
+        {
+            ConsoleHelper.LogoType = LogoType.Films;
+            ConsoleHelper.Breadcrumb = $"Films / {movie.Title} / Dagen en tijd / Aantal";
+
+            var confirmationMenu = ChoiceMenu.CreateConfirmationChoiceMenu($"   Film: {movie.Title}\n   Aantal tickets: {ticketsAmount}\n   " +
+            $"Dag en tijd: {day.First().ToString().ToUpper() + day.Substring(1)} om {time} uur.\n\n   Gaat je hiermee akkoord?\n");
+
+            Console.Clear();
+
+            var confirmationChoice = confirmationMenu.MakeChoice();
+
+            if (confirmationChoice.Key == "Ja")
                 ShowSeats(movie);
+            else
+                ShowFilmInfo(movie.Title);
         }
 
         private static void ShowSeats(Movie movie)
@@ -129,6 +239,7 @@ namespace Cinecon
                 ShowFilmInfo(movie.Title);
             if (seatChoices.Item1 == "Ga door")
                 ShowFilms();
+
         }
 
         private static void ShowFilters()
