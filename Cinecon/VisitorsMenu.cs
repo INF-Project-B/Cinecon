@@ -66,7 +66,6 @@ namespace Cinecon
                 movies[movie.Title] = null;
             }
 
-
             var movieMenu = new ChoiceMenu(movies, true);
 
             var movieChoice = movieMenu.MakeChoice();
@@ -116,6 +115,8 @@ namespace Cinecon
 
             var dateChoice = dateMenu.MakeChoice();
 
+            if (dateChoice.Key == "Dag en tijden")
+                ChooseFilmDays(movie);
            // if (dateChoice.Key == "Reset filters")
                // ShowDateAndTime(movie);
             if (dateChoice.Key == "Terug")
