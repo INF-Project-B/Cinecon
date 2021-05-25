@@ -12,10 +12,8 @@ namespace Cinecon
          
             ConsoleHelper.Breadcrumb = $"Films / Koop Tickets";
 
-
-           
-
             Console.Write($"Selecteer datum en tijd: ");
+
                 
          
             Console.Write($"Aantal: ");
@@ -23,7 +21,8 @@ namespace Cinecon
             if (!int.TryParse(quantity, out int num))
                 Console.WriteLine("Kies opnieuw het AANTAL kaartjes!");
             else
-                Console.WriteLine($"U heeft gekozen voor de film; {movieName}\n\nDaarbij heeft u gekozen voor ({quantity}) kaartjes,\ndie geldig zijn op TEST om Test uur!\n\nGaat u hiermee akkoord?");
+                Console.WriteLine($"U heeft gekozen voor de film; {movieName}\n\n/" +
+                    $"Daarbij heeft u gekozen voor ({quantity}) kaartjes,\ndie geldig zijn op TEST om Test uur!\n\nGaat u hiermee akkoord?");
             
            var ticketChoiceMenu = new ChoiceMenu(new Dictionary<string, Action>
             {
@@ -35,7 +34,7 @@ namespace Cinecon
             var dealChoice = ticketChoiceMenu.MakeChoice();
             
             if (dealChoice.Key == "Akkoord")
-                Seats.ChooseSeats();
+                Seats.ChooseSeats(2);
                 
             else if (dealChoice.Key == "Terug")
                 ShowTicketMenu(movieName);
