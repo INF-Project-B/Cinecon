@@ -208,12 +208,13 @@ namespace Cinecon
             ConsoleHelper.Breadcrumb = $"Films / {movie.Title} / {day.First().ToString().ToUpper() + day.Substring(1)} om {time} / Aantal";
             ConsoleHelper.WriteBreadcrumb();
 
-            string txt = "Kies opnieuw het AANTAL kaartjes!";
-            Console.Write("Type het gewenste aantal kaartjes: ");
-            var quantity = Console.ReadLine();
-
+            
             if (error)
-                Console.WriteLine(txt);
+                Console.WriteLine("Kies opnieuw het AANTAL kaartjes!");
+            else
+                Console.Write("Type het gewenste aantal kaartjes: ");
+                var quantity = Console.ReadLine();
+
 
             int count = RoomManagement.GetRoom(movie.Room).Seats.Count(x => !x.IsTaken);
 
@@ -239,13 +240,14 @@ namespace Cinecon
         public static void ShowTicketMenu(Movie movie, string day, string time, int tickets) // verbeteren.
         {
             ConsoleHelper.LogoType = LogoType.Films;
-            ConsoleHelper.Breadcrumb = $"Films / {movie.Title} / {day.First().ToString().ToUpper() + day.Substring(1)} om {time} / Aantal ({tickets.ToString()})";
+            ConsoleHelper.Breadcrumb = $"Films / {movie.Title} / Dagen en tijd / Aantal";
+            string txt = $"   U heeft gekozen voor de film; {movie.Title}.\n\n   Daarbij heeft u gekozen voor ({tickets}) kaartjes,\n   die geldig zijn op {day.First().ToString().ToUpper() + day.Substring(1)} om {time} uur.\n\n   Gaat u hiermee akkoord?\n";
 
             var ticketChoiceMenu = new ChoiceMenu(new Dictionary<string, Action>
             {
                 {"Akkoord", null }
 
-            }, addBackChoice: true);
+            }, addBackChoice: true, txt);
             Console.Clear();
 
             var dealChoice = ticketChoiceMenu.MakeChoice();

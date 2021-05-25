@@ -35,10 +35,9 @@ namespace Cinecon
             
             if (dealChoice.Key == "Akkoord")
                 Seats.ChooseSeats(2);
-                
+            
             else if (dealChoice.Key == "Terug")
-                ShowTicketMenu(movieName);
-                    
+                ShowTicketMenu(movieName);        
         }
     }
 }
