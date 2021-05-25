@@ -9,7 +9,7 @@ namespace Cinecon
         public static Room GetRoom(int roomNumber)
             => JsonHelper.Rooms.FirstOrDefault(x => x.Number == roomNumber);
 
-        public static class RoomCreation
+        private static class RoomCreation
         {
             public static Room CreateRoomSetup()
             {
@@ -43,7 +43,6 @@ namespace Cinecon
                             ConsoleHelper.WriteLogoAndBreadcrumb();
                             ConsoleHelper.ColorWriteLine("   Er bestaat al een zaal met dit nummer.\n", ConsoleColor.Red);
                         }
-                            
                     }
                     else
                     {
@@ -102,34 +101,21 @@ namespace Cinecon
         {
             ConsoleHelper.Breadcrumb = "Zalen";
 
-            var roomManagementOptions = new ChoiceMenu(new Dictionary<string, Action>
-            {
-                { "Zaal toevoegen", ShowAddRoom },
-                { "Zaal management", ShowRooms }
-            }, addBackChoice: true);
+            var roomOptions = new Dictionary<string, Action>();
 
-            var roomManagementOptionsChoice = roomManagementOptions.MakeChoice();
+            roomOptions["Zaal toevoegen"] = ShowAddRoom;
 
-            if (roomManagementOptionsChoice.Key == "Terug")
-                EmployeesMenu.ShowEmployeesMenu();
-            else
-                roomManagementOptionsChoice.Value();
-        }
-
-        private static void ShowRooms()
-        {
-            ConsoleHelper.Breadcrumb = "Zalen / Zaal management";
-
-            var rooms = new Dictionary<string, Action>();
             foreach (var room in JsonHelper.Rooms.OrderBy(x => x.Number))
-                rooms[$"Zaal {room.Number}"] = null;
+                roomOptions[$"Zaal {room.Number}"] = null;
 
-            var roomOptions = new ChoiceMenu(rooms, addBackChoice: true, rooms.Count > 0 ? "" : "   Geen zalen gevonden.");
+            var roomOptionsMenu = new ChoiceMenu(roomOptions, addBackChoice: true, roomOptions.Count > 0 ? "" : "   Geen zalen gevonden.");
 
-            var roomOptionsChoice = roomOptions.MakeChoice();
+            var roomOptionsChoice = roomOptionsMenu.MakeChoice();
 
             if (roomOptionsChoice.Key == "Terug")
-                ShowRoomOptions();
+                EmployeesMenu.ShowEmployeesMenu();
+            else if (roomOptionsChoice.Value != null)
+                roomOptionsChoice.Value();
             else
                 ShowRoomManagement(int.Parse(roomOptionsChoice.Key.Replace("Zaal ", "")));
         }
@@ -138,7 +124,7 @@ namespace Cinecon
         {
             Console.Clear();
 
-            ConsoleHelper.Breadcrumb = $"Zalen / Zaal management / Zaal {roomNumber}";
+            ConsoleHelper.Breadcrumb = $"Zalen / Zaal {roomNumber}";
 
             var room = GetRoom(roomNumber);
 
@@ -148,7 +134,7 @@ namespace Cinecon
                 { "Aantal rijen wijzigen", null },
                 { "Aantal stoelen per rij wijzigen", null },
                 { "Zaal verwijderen", null }
-            }, addBackChoice: true, $"   Zaal: {room.Number}\n   Aantal rijen: {room.TotalRows}\n   Stoelen per rij: {room.SeatsPerRow}\n   Aantal stoelen: {room.TotalSeats}\n");
+            }, addBackChoice: true, $"   Zaal: {room.Number}\n   Beschikbare stoelen: {room.Seats.Count(x => !x.IsTaken)}/{room.Seats.Count}\n   Aantal rijen: {room.TotalRows}\n   Stoelen per rij: {room.SeatsPerRow}\n   Aantal stoelen: {room.TotalSeats}\n");
 
             var roomInfoOptionsChoice = roomInfoOptions.MakeChoice();
             
@@ -158,7 +144,7 @@ namespace Cinecon
             {
                 case "Terug":
                     Console.Clear();
-                    ShowRooms();
+                    ShowRoomOptions();
                     break;
                 case "Zaalnummer wijzigen":                    
                     ConsoleHelper.Breadcrumb += " / Zaalnummer wijzigen";
@@ -188,7 +174,7 @@ namespace Cinecon
                         JsonHelper.Rooms.Remove(room);
                         JsonHelper.UpdateJsonFiles();
                         Console.Clear();
-                        ShowRooms();
+                        ShowRoomOptions();
                     }
                     else
                         ShowRoomManagement(roomNumber);

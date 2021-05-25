@@ -12,7 +12,6 @@ namespace Cinecon
     {
         private static List<KeyValuePair<string, Action>> _genres;
         private static KeyValuePair<string, string[]> _dayAndTimes;
-
         private static readonly List<KeyValuePair<string, decimal>> _menuCart = new List<KeyValuePair<string, decimal>>();
         private static string MenuCartText 
         { 
@@ -35,8 +34,8 @@ namespace Cinecon
 
             var visitorsMenu = new ChoiceMenu(new Dictionary<string, Action>
             {
-                { "Films", ShowFilms },
-                { "Menu", ShowMenuConfirmation }
+                { "Ga naar Films", ShowFilms },
+                { "Bestel je snacks en dranken", ShowMenuConfirmation }
             }, addBackChoice: true);
 
             var visitorsMenuChoice = visitorsMenu.MakeChoice();
@@ -89,13 +88,14 @@ namespace Cinecon
 
             var filmChoiceMenu = new ChoiceMenu(new Dictionary<string, Action>
             {
-                { "Koop tickets", null },
+                { "Koop tickets", null }
             }, addBackChoice: true, text);
 
             var filmChoice = filmChoiceMenu.MakeChoice();
 
             if (filmChoice.Key == "Terug")
                 ShowFilms();
+
             if (filmChoice.Key == "Koop tickets")
                 ShowDateAndTime(movie);
         }
@@ -109,16 +109,13 @@ namespace Cinecon
             var dateMenu = new ChoiceMenu(new Dictionary<string, Action>
             {
                 {"Dag en tijden", null},
-               // { "Reset filters", () => { _genres = null; _dayAndTimes = new KeyValuePair<string, string[]>(); } },
-
             }, addBackChoice: true);
 
             var dateChoice = dateMenu.MakeChoice();
 
             if (dateChoice.Key == "Dag en tijden")
                 ChooseFilmDays(movie);
-           // if (dateChoice.Key == "Reset filters")
-               // ShowDateAndTime(movie);
+
             if (dateChoice.Key == "Terug")
                 ShowFilmInfo(movie.Title);
         }
@@ -169,48 +166,80 @@ namespace Cinecon
             if (choiceDate.Key == "Terug")
                 ChooseFilmDays(movie);
             else
-                HowManyTickets(movie, day.ToString(), choiceDate.Key.ToString());  // placeholder welk scherm moet hierna komen dan? dag en tijden kan je al kiezen SFASDFSAFAS
+                HowManyTickets(movie, day.ToString(), choiceDate.Key.ToString()); 
         }
 
-        public static void HowManyTickets(Movie movie, string day, string time) /// hier gaat r iets mis
+        private static void ShowSeats(Movie movie)
+        {
+            var room = JsonHelper.Rooms.FirstOrDefault(x => x.Number == movie.Room);
+
+            var seats = new List<Dictionary<string, Action>>();
+
+            var seatNumber = 0;
+            for (int i = 0; i < room.TotalRows; i++)
+            {
+                var row = new Dictionary<string, Action>();
+                for (int j = 0; j < room.SeatsPerRow; j++)
+                {
+                    row[$"{room.Seats[seatNumber].Row}{(room.Seats[seatNumber].Number < 10 ? "0" : "")}{room.Seats[seatNumber].Number}"] = null;
+                    seatNumber++;
+                }
+                seats.Add(row);
+            }
+
+            seats.Add(new Dictionary<string, Action> { { "Terug", ShowFilms } });
+            seats.Add(new Dictionary<string, Action> { { "Ga door", null } });
+
+            var seatChoiceMenu = new ChoiceMenu(seats, true, $"   Zaal: {room.Number}\n   Kies aub x aantal stoelen door op enter te drukken\n", ConsoleColor.Yellow);
+
+            var seatChoices = seatChoiceMenu.MakeAllChoice(room: room);
+
+            if (seatChoices.Item1 == "Terug")
+                ShowFilmInfo(movie.Title);
+            if (seatChoices.Item1 == "Ga door")
+                ShowFilms();
+
+        }
+
+        public static void HowManyTickets(Movie movie, string day, string time, bool error = false) /// hier gaat r iets mis
         {
             Console.Clear();
             ConsoleHelper.WriteLogo(ConsoleColor.Red);
             ConsoleHelper.Breadcrumb = $"Films / {movie.Title} / {day.First().ToString().ToUpper() + day.Substring(1)} om {time} / Aantal";
             ConsoleHelper.WriteBreadcrumb();
 
-            var txt = "Kies opnieuw het AANTAL kaartjes!";
+            string txt = "Kies opnieuw het AANTAL kaartjes!";
             Console.Write("Type het gewenste aantal kaartjes: ");
             var quantity = Console.ReadLine();
 
+            if (error)
+                Console.WriteLine(txt);
 
             int count = RoomManagement.GetRoom(movie.Room).Seats.Count(x => !x.IsTaken);
 
             if (!int.TryParse(quantity, out int num))
             {
-                Console.WriteLine(txt);
-                HowManyTickets(movie, day, time);
+                HowManyTickets(movie, day, time, true);
                 return;
             }
 
             int qty = int.Parse(quantity);
+
             while (true)
-               if (num > count)
+               if (num > count && num < 1)
                 {
-                    Console.WriteLine(txt);
-                    HowManyTickets(movie, day, time);
+                    HowManyTickets(movie, day, time, true);
+                    return;
                 }
                 else
                     break;
                     ShowTicketMenu(movie, day, time, qty);
         }
-       
-
 
         public static void ShowTicketMenu(Movie movie, string day, string time, int tickets) // verbeteren.
         {
             ConsoleHelper.LogoType = LogoType.Films;
-            ConsoleHelper.Breadcrumb = $"Films / {movie.Title} / {day.First().ToString().ToUpper() + day.Substring(1)} om {time} / Aantal";
+            ConsoleHelper.Breadcrumb = $"Films / {movie.Title} / {day.First().ToString().ToUpper() + day.Substring(1)} om {time} / Aantal ({tickets.ToString()})";
 
             var ticketChoiceMenu = new ChoiceMenu(new Dictionary<string, Action>
             {
@@ -227,6 +256,7 @@ namespace Cinecon
             else if (dealChoice.Key == "Terug")
                 HowManyTickets(movie, day, time);
         }
+
     private static void ShowFilters()
         {
             ConsoleHelper.LogoType = LogoType.Films;
@@ -261,7 +291,7 @@ namespace Cinecon
 
             var dayChoiceMenu = new ChoiceMenu(dayOptions, true);
 
-            var dayChoice = dayChoiceMenu.MakeChoice();
+            var dayChoice = dayChoiceMenu.MakeChoice(_dayAndTimes.Key != null ? new[] { _dayAndTimes.Key } : null);
 
             if (dayChoice.Key == "Terug")
                 ShowFilters();
@@ -409,8 +439,8 @@ namespace Cinecon
             ConsoleHelper.LogoType = LogoType.Films;
             ConsoleHelper.Breadcrumb = $"Films / {movie.Title} / Koop tickets / Betaling";
 
-            var name = "";
-            var email = "";
+            string name;
+            string email;
 
             do
             {
@@ -478,7 +508,7 @@ namespace Cinecon
 
             JsonHelper.UpdateJsonFiles();
 
-            Task.Run(() => SendReservationEmail(reservation));
+            _ = Task.Run(() => SendReservationEmail(reservation));
 
             new ChoiceMenu(new Dictionary<string, Action>
             {
@@ -489,7 +519,7 @@ namespace Cinecon
 
         private static string GenerateRandomCode()
         {
-            var randomCode = "";
+            string randomCode;
             var r = new Random();
             var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
