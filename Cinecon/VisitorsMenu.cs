@@ -171,6 +171,35 @@ namespace Cinecon
             else
                 HowManyTickets(movie, day.ToString(), choiceDate.Key.ToString());  // placeholder welk scherm moet hierna komen dan? dag en tijden kan je al kiezen SFASDFSAFAS
         }
+
+        public static void HowManyTickets(Movie movie, string day, string time) /// hier gaat r iets mis
+        {
+            Console.Clear();
+            ConsoleHelper.WriteLogo(ConsoleColor.Red);
+            ConsoleHelper.Breadcrumb = $"Films / {movie.Title} / {day.First().ToString().ToUpper() + day.Substring(1)} om {time} / Aantal";
+            ConsoleHelper.WriteBreadcrumb();
+
+            var txt = "Kies opnieuw het AANTAL kaartjes!";
+            Console.Write("Type het gewenste aantal kaartjes: ");
+            var quantity = Console.ReadLine();
+            
+          
+            foreach (var seat in rooms)
+
+                //var a = room.Seats.Count(x => !x.IsTaken)}
+
+                int qty = Int.Parse(quantity);
+            while (true)
+                if (!int.TryParse(quantity, out int num)/* || qty > maxstoelen */)
+                {
+
+                    Console.WriteLine(txt);
+                    HowManyTickets(movie, day, time);
+                }
+                else
+                    break;
+                    ShowTicketMenu(movie, day, time, qty);
+        }
         {
             ConsoleHelper.LogoType = LogoType.Films;
             ConsoleHelper.Breadcrumb = "Films / Filters";
