@@ -182,17 +182,21 @@ namespace Cinecon
             var txt = "Kies opnieuw het AANTAL kaartjes!";
             Console.Write("Type het gewenste aantal kaartjes: ");
             var quantity = Console.ReadLine();
-            
-          
-            foreach (var seat in rooms)
 
-                //var a = room.Seats.Count(x => !x.IsTaken)}
 
-                int qty = Int.Parse(quantity);
+            int count = RoomManagement.GetRoom(movie.Room).Seats.Count(x => !x.IsTaken);
+
+            if (!int.TryParse(quantity, out int num))
+            {
+                Console.WriteLine(txt);
+                HowManyTickets(movie, day, time);
+                return;
+            }
+
+            int qty = int.Parse(quantity);
             while (true)
-                if (!int.TryParse(quantity, out int num)/* || qty > maxstoelen */)
+               if (num > count)
                 {
-
                     Console.WriteLine(txt);
                     HowManyTickets(movie, day, time);
                 }
@@ -200,6 +204,9 @@ namespace Cinecon
                     break;
                     ShowTicketMenu(movie, day, time, qty);
         }
+       
+
+
         public static void ShowTicketMenu(Movie movie, string day, string time, int tickets) // verbeteren.
         {
             ConsoleHelper.LogoType = LogoType.Films;
