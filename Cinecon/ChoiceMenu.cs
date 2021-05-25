@@ -22,7 +22,7 @@ namespace Cinecon
             _textColor = textColor;
         }
 
-        public ChoiceMenu(List<Dictionary<string, Action>> twodChoices, bool addBackChoice, string text = null, ConsoleColor textColor = ConsoleColor.White)
+        public ChoiceMenu(List<Dictionary<string, Action>> twodChoices, string text = null, ConsoleColor textColor = ConsoleColor.White)
         {
 
             _2dChoices = twodChoices.Select(x => x.ToList()).ToList();

@@ -42,7 +42,8 @@ namespace Cinecon
                     activatedCodes[count++] = reservation.Code;
             }
 
-            var reservationsCodeChoice = new ChoiceMenu(reservationCodes).MakeChoice(activatedCodes);
+            var reservationsCodeChoice = new ChoiceMenu(reservationCodes, false, "   Geactiveerde codes worden met groen aangegeven.\n", ConsoleColor.Yellow).MakeChoice(activatedCodes);
+
             if (reservationsCodeChoice.Key == "Zoek op code")
                 ShowSearchCode(reservationCodes);
             else if (reservationsCodeChoice.Key == "Terug")
