@@ -98,7 +98,6 @@ namespace Cinecon
             else
                 ShowDateAndTime(movie);
         }
-
         
         private static void ShowDateAndTime(Movie movie)
         {
