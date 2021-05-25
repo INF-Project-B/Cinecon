@@ -143,7 +143,34 @@ namespace Cinecon
                 ChooseFilmTime(movie, dayChoice.Key.ToLower());
         }
 
-        private static void ShowFilters()
+        public static void ChooseFilmTime(Movie movie, string day)
+        {
+            ConsoleHelper.LogoType = LogoType.Films;
+            ConsoleHelper.Breadcrumb = $"Films / {movie.Title} / Dagen & Tijden";
+
+            var listOfTimes = new Dictionary<string, Action>();
+            foreach (var time in movie.Days[day])
+                listOfTimes[time] = null;
+
+            var msg = listOfTimes.Count > 0 ? "" : "Geen tijden gevonden.";
+            var timeChoiceMenu = new ChoiceMenu(listOfTimes,true, msg);
+
+            var dayAndTime = new Dictionary<string, Action>();
+            if (_dayAndTimes.Value != null && _dayAndTimes.Key == day)
+            {
+                foreach (var time in _dayAndTimes.Value)
+                    dayAndTime[time] = null;
+            }
+
+            
+            var choiceDate = timeChoiceMenu.MakeChoice();
+
+
+            if (choiceDate.Key == "Terug")
+                ChooseFilmDays(movie);
+            else
+                HowManyTickets(movie, day.ToString(), choiceDate.Key.ToString());  // placeholder welk scherm moet hierna komen dan? dag en tijden kan je al kiezen SFASDFSAFAS
+        }
         {
             ConsoleHelper.LogoType = LogoType.Films;
             ConsoleHelper.Breadcrumb = "Films / Filters";
