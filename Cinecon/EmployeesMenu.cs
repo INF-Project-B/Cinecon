@@ -56,7 +56,7 @@ namespace Cinecon
             Console.CursorVisible = true;
             ConsoleHelper.WriteLogoAndBreadcrumb();
 
-            var searchAgain = ChoiceMenu.CreateConfirmationChoiceMenu("   De ingevulde code was niet gevonden. Wilt u eens zoeken?\n");
+            var searchAgain = ChoiceMenu.CreateConfirmationChoiceMenu("   De ingevulde code was niet gevonden. Wilt u nog eens zoeken?\n");
 
             string code;
             while (true)
