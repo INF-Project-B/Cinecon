@@ -133,6 +133,14 @@ namespace Cinecon
             foreach (var day in movie.Days.Where(x => x.Value.Any()))
                 listOfDays[day.Key.First().ToString().ToUpper() + day.Key.Substring(1)] = null;
 
+            var msg = listOfDays.Count > 0 ? "" : "Geen dagen gevonden.";
+            var dayChoiceMenu = new ChoiceMenu(listOfDays, true, msg);
+            var dayChoice = dayChoiceMenu.MakeChoice();
+
+            if (dayChoice.Key == "Terug")
+                ShowDateAndTime(movie);
+            else
+                ChooseFilmTime(movie, dayChoice.Key.ToLower());
         }
 
         private static void ShowFilters()
