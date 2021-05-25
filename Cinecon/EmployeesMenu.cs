@@ -61,7 +61,7 @@ namespace Cinecon
             string code;
             while (true)
             {
-                code = ConsoleHelper.ReadLineWithText("   Voer aub een code in met een lengte van 5 letters en/of getallen. -> ", writeLine: false);
+                code = ConsoleHelper.ReadLineWithText("   Voer a.u.b. een code in met een lengte van 5 letters en/of getallen. -> ", writeLine: false);
 
                 if (reservationCodes.ContainsKey(code)) 
                 {
@@ -72,7 +72,7 @@ namespace Cinecon
                 else if (code.Length != 5) 
                 {
                     ConsoleHelper.WriteLogoAndBreadcrumb();
-                    ConsoleHelper.ColorWriteLine("   Vul aub een code in met een lengte van 5\n", ConsoleColor.Red);
+                    ConsoleHelper.ColorWriteLine("   Vul a.u.b. een code in met een lengte van 5\n", ConsoleColor.Red);
                 } 
                 else 
                 {

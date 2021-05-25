@@ -262,13 +262,13 @@ namespace Cinecon
                     {
                         Console.WriteLine();
                         Console.WriteLine();
-                        ConsoleHelper.ColorWriteLine("   Kies aub het aantal stoelen dat u hebt aangegeven door op enter te drukken", ConsoleColor.Red);
+                        ConsoleHelper.ColorWriteLine("   Kies a.u.b. het aantal stoelen dat u hebt aangegeven door op enter te drukken", ConsoleColor.Red);
                     }
                     if (new[] { "Terug" }.Any(x => x == choice.Key) && takenSeat)
                     {
                         Console.WriteLine();
                         Console.WriteLine();
-                        ConsoleHelper.ColorWriteLine("   Kies aub een stoel die niet bezet is.", ConsoleColor.Red);
+                        ConsoleHelper.ColorWriteLine("   Kies a.u.b. een stoel die niet bezet is.", ConsoleColor.Red);
                     }
                 }
                 Console.WriteLine();
