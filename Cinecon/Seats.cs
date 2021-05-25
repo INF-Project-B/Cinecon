@@ -3,9 +3,9 @@ namespace Cinecon
 {
     public static class Seats 
     {
-        public static void ChooseSeats()
+        public static void ChooseSeats(int x)
         {
-            Console.WriteLine("Je moer!!");
+            Console.WriteLine("placeholder..nuur {x}");
         }
     }
 }

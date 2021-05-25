@@ -97,6 +97,41 @@ namespace Cinecon
 
             if (filmChoice.Key == "Terug")
                 ShowFilms();
+            if (filmChoice.Key == "Koop tickets")
+                ShowDateAndTime(movie);
+        }
+
+        
+        private static void ShowDateAndTime(Movie movie)
+        {
+            ConsoleHelper.LogoType = LogoType.Films;
+            ConsoleHelper.Breadcrumb = $"Films / {movie.Title}";
+
+            var dateMenu = new ChoiceMenu(new Dictionary<string, Action>
+            {
+                {"Dag en tijden", null},
+               // { "Reset filters", () => { _genres = null; _dayAndTimes = new KeyValuePair<string, string[]>(); } },
+
+            }, addBackChoice: true);
+
+            var dateChoice = dateMenu.MakeChoice();
+
+           // if (dateChoice.Key == "Reset filters")
+               // ShowDateAndTime(movie);
+            if (dateChoice.Key == "Terug")
+                ShowFilmInfo(movie.Title);
+        }
+
+        private static void ChooseFilmDays(Movie movie)
+        {
+            ConsoleHelper.LogoType = LogoType.Films;
+            ConsoleHelper.Breadcrumb = $"Films / {movie.Title} / Dagen & Tijden";
+
+            var listOfDays = new Dictionary<string,Action>();
+
+            foreach (var day in movie.Days.Where(x => x.Value.Any()))
+                listOfDays[day.Key.First().ToString().ToUpper() + day.Key.Substring(1)] = null;
+
         }
 
         private static void ShowFilters()
