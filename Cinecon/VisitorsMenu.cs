@@ -85,7 +85,7 @@ namespace Cinecon
             
             var movie = JsonHelper.Movies.FirstOrDefault(x => x.Title == movieName);
 
-            var text = $"Titel: {movie.Title}\n\nOmschrijving: { movie.Description}\n\nZaal: {movie.Room}\n\n_______________________________________\n";       
+            var text = $"   Titel: {movie.Title}\n\n   Omschrijving: { movie.Description}\n\n   Zaal: {movie.Room}\n\n_______________________________________\n";       
 
             var filmChoiceMenu = new ChoiceMenu(new Dictionary<string, Action>
             {
