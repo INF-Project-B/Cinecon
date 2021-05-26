@@ -192,17 +192,15 @@ namespace Cinecon
                         break;
                     case ConsoleKey.Enter:
                         var choice = _2dChoices[indexY][indexX];
-                        if (new[] { "Terug" }.Any(x => x == choice.Key))
+                        if (choice.Key == "Terug")
                         {
                             Console.Clear();
                             return Tuple.Create(choice.Key, room.Seats);
                         }
-                        if (new[] { "Ga door" }.Any(x => x == choice.Key))
+                        else if (choice.Key == "Ga door")
                         {
                             if (choices.Count != amount)
-                            {
                                 WriteAllMenu(indexY, indexX, choices, room: room, false);
-                            }
                             else
                             {
                                 Console.Clear();
@@ -258,13 +256,13 @@ namespace Cinecon
                         else
                             ConsoleHelper.ColorWrite($"   [{choice.Key}]", choiceIsSelected && !seatIsTaken ? ConsoleColor.Green : seatIsTaken ? ConsoleColor.DarkRed : ConsoleColor.White);
                     }
-                    if (new[] { "Terug" }.Any(x => x == choice.Key) && !seatsAmount)
+                    if (choice.Key == "Terug" && !seatsAmount)
                     {
                         Console.WriteLine();
                         Console.WriteLine();
                         ConsoleHelper.ColorWriteLine("   Kies a.u.b. het aantal stoelen dat u hebt aangegeven door op enter te drukken", ConsoleColor.Red);
                     }
-                    if (new[] { "Terug" }.Any(x => x == choice.Key) && takenSeat)
+                    if (choice.Key == "Terug" && takenSeat)
                     {
                         Console.WriteLine();
                         Console.WriteLine();
