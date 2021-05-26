@@ -4,33 +4,15 @@ using System.Linq;
 
 namespace Cinecon
 {
-    public static class EmployeesMenu
+    public static class ReservationManagement
     {
-        public static void ShowEmployeesMenu()
+        public static void ShowReservations()
         {
-            ConsoleHelper.LogoType = LogoType.Employee;
-            ConsoleHelper.Breadcrumb = null;
-
-            var employeesMenu = new ChoiceMenu(new Dictionary<string, Action>
+            var reservationCodes = new Dictionary<string, Action>
             {
-                { "Reserveringscodes", ShowReservations },
-                { "Zalen", RoomManagement.ShowRoomOptions }
-            }, addBackChoice: true);
-
-            var employeesMenuChoice = employeesMenu.MakeChoice();
-
-            if (employeesMenuChoice.Key == "Terug")
-                Program.StartChoice();
-            else
-                employeesMenuChoice.Value();
-        }        
-
-        private static void ShowReservations()
-        {
-            var reservationCodes = new Dictionary<string, Action>();
-
-            reservationCodes["Zoek op code"] = null;
-            reservationCodes["Terug"] = null;
+                ["Zoek op code"] = null,
+                ["Terug"] = null
+            };
 
             var activatedCodes = new string[JsonHelper.ReservationData.Reservations.Count(x => x.IsActivated)];
 
@@ -47,7 +29,7 @@ namespace Cinecon
             if (reservationsCodeChoice.Key == "Zoek op code")
                 ShowSearchCode(reservationCodes);
             else if (reservationsCodeChoice.Key == "Terug")
-                ShowEmployeesMenu();
+                EmployeesMenu.ShowEmployeesMenu();
             else
                 ShowCodeInfo(JsonHelper.ReservationData.Reservations.FirstOrDefault(x => x.Code == reservationsCodeChoice.Key));
         }
@@ -64,18 +46,18 @@ namespace Cinecon
             {
                 code = ConsoleHelper.ReadLineWithText("   Voer a.u.b. een code in met een lengte van 5 letters en/of getallen. -> ", writeLine: false);
 
-                if (reservationCodes.ContainsKey(code)) 
+                if (reservationCodes.ContainsKey(code))
                 {
                     Console.Clear();
                     ShowCodeInfo(JsonHelper.ReservationData.Reservations.FirstOrDefault(x => x.Code == code));
                     break;
-                } 
-                else if (code.Length != 5) 
+                }
+                else if (code.Length != 5)
                 {
                     ConsoleHelper.WriteLogoAndBreadcrumb();
                     ConsoleHelper.ColorWriteLine("   Vul a.u.b. een code in met een lengte van 5\n", ConsoleColor.Red);
-                } 
-                else 
+                }
+                else
                 {
                     Console.Clear();
                     var searchAgainChoice = searchAgain.MakeChoice();

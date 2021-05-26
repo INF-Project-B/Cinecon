@@ -20,7 +20,7 @@ namespace Cinecon
 
             var choiceMenu = new ChoiceMenu(new Dictionary<string, Action>
             {
-                { "Bezoeker", VisitorsMenu.ShowVisitorMenu },
+                { "Bezoeker", MovieSystem.ShowFilms },
                 { "Medewerker", EmployeesMenu.ShowEmployeesMenu },
                 { "Exit", () => Environment.Exit(0) },
             }, 

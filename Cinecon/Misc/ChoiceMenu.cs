@@ -127,7 +127,7 @@ namespace Cinecon
             }
         }
 
-        public Tuple<string, List<Seat>> MakeAllChoice(List<List<KeyValuePair<string, Action>>> preselectedGenres = null, Room room = null)
+        public Tuple<string, List<Seat>> MakeAllChoice(int amount, List<List<KeyValuePair<string, Action>>> preselectedGenres = null, Room room = null)
         {
             Console.CursorVisible = false;
             WriteAllMenu(0, 0, room: room);
@@ -199,14 +199,14 @@ namespace Cinecon
                         }
                         if (new[] { "Ga door" }.Any(x => x == choice.Key))
                         {
-                            if (choices.Count != 5)
+                            if (choices.Count != amount)
                             {
                                 WriteAllMenu(indexY, indexX, choices, room: room, false);
                             }
                             else
                             {
                                 Console.Clear();
-                                return Tuple.Create(choice.Key, room.Seats.Intersect(choices.Select(x => new Seat { IsTaken = true, Row = x.Key[0].ToString(), Number = int.Parse(x.Key.Substring(1)) })).ToList());
+                                return Tuple.Create(choice.Key, choices.Select(x => new Seat { IsTaken = true, Row = x.Key[0].ToString(), Number = int.Parse(x.Key[1..]) }).ToList());
                             }
                         }
                         else

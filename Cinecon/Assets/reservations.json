@@ -8,6 +8,7 @@
             "email": "h@ykmarkarian.com",
             "is_activated": false,
             "payment_method": "iDeal",
+            "room": 1,
             "seats": [
                 {
                     "row": "A",
@@ -15,7 +16,7 @@
                 },
                 {
                     "row": "B",
-                    "number": 8
+                    "number": 2
                 }
             ],
             "total_price": 20.0
@@ -26,6 +27,7 @@
             "email": "test@test.nl",
             "is_activated": false,
             "payment_method": "PayPal",
+            "room": 1,
             "seats": [
                 {
                     "row": "A",
@@ -33,20 +35,6 @@
                 }
             ],
             "total_price": 15.0
-        },
-        {
-            "code": "BMX54",
-            "name": "Nuur",
-            "email": "test@test.nl",
-            "is_activated": false,
-            "payment_method": "Credit Card",
-            "seats": [
-                {
-                    "row": "A",
-                    "number": 3
-                }
-            ],
-            "total_price": 10.0
         }
     ]
 }
