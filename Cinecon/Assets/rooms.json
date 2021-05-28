@@ -13,12 +13,12 @@
             {
                 "row": "A",
                 "number": 2,
-                "taken": true
+                "taken": false
             },
             {
                 "row": "A",
                 "number": 3,
-                "taken": true
+                "taken": false
             },
             {
                 "row": "B",

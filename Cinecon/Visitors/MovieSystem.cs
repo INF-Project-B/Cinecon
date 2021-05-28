@@ -1,10 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Net;
-using System.Net.Mail;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 
 namespace Cinecon
 {
@@ -160,8 +156,8 @@ namespace Cinecon
 
             var dayOptions = new Dictionary<string, Action>();
             
-            foreach (var day in new[] { "Maandag", "Dinsdag", "Woensdag", "Donderdag", "Vrijdag", "Zaterdag", "Zondag" })
-                dayOptions[day] = null;
+            foreach (var day in JsonHelper.Days)
+                dayOptions[$"{day.Item1.DayOfWeek} - {day.Item1:dd/MM}"] = null;
 
             var dayChoiceMenu = new ChoiceMenu(dayOptions, true);
 
@@ -170,11 +166,11 @@ namespace Cinecon
             if (dayChoice.Key == "Terug")
                 ShowFilters();
             else
-                ShowTimes(dayChoice.Key);
+                ShowTimes(JsonHelper.Days.FirstOrDefault(x => x.Item1.ToString("hh/MM") == dayChoice.Key.Split(" - ")[1]).Item1);
 
-            static void ShowTimes(string day)
+            static void ShowTimes(DateTime date)
             {
-                ConsoleHelper.Breadcrumb += $" / {day}";
+                ConsoleHelper.Breadcrumb += $" / {date.DayOfWeek}";
 
                 var timeOptions = new Dictionary<string, Action>();
 

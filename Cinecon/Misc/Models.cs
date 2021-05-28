@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -46,6 +47,7 @@ namespace Cinecon
         [JsonProperty("payment_method")]
         public string PaymentMethod { get; set; }
         public int Room { get; set; }
+        public DateTime Date { get; set; }
         public Movie Movie { get; set; }
         public List<Seat> Seats { get; set; }
     }
@@ -68,16 +70,15 @@ namespace Cinecon
         [JsonProperty("seats_per_row")]
         public int SeatsPerRow { get; set; }
         public List<Movie> Movies { get; set; }
-        public List<Seat> Seats
+        public List<Seat> Seats { get => GetSeats(); }
+
+        public List<Seat> GetSeats(DateTime date = default)
         {
-            get
-            {
-                var seats = new List<Seat>();
-                for (int i = 0; i < TotalRows; i++)
-                    for (int j = 0; j < SeatsPerRow; j++)
-                        seats.Add(new Seat { Row = ((char)(65 + i)).ToString(), Number = j + 1, IsTaken = JsonHelper.ReservationData?.Reservations?.Where(x => x.Room == Number).Any(x => x.Seats.Any(x => x.Row == ((char)(65 + i)).ToString() && x.Number == j + 1)) ?? false });
-                return seats;
-            }
+            var seats = new List<Seat>();
+            for (int i = 0; i < TotalRows; i++)
+                for (int j = 0; j < SeatsPerRow; j++)
+                    seats.Add(new Seat { Row = ((char)(65 + i)).ToString(), Number = j + 1, IsTaken = JsonHelper.ReservationData?.Reservations?.Where(x => (date == default || x.Date.Date == date.Date) && x.Room == Number).Any(x => x.Seats.Any(x => x.Row == ((char)(65 + i)).ToString() && x.Number == j + 1)) ?? false });
+            return seats;
         }
     }
 

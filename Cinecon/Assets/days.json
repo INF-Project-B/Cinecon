@@ -1,0 +1,46 @@
+[
+    {
+        "Item1": "",
+        "Item2": [
+            {
+                "number": 1,
+                "total_seats": 6,
+                "total_rows": 2,
+                "seats_per_row": 3,
+                "seats": [
+                    {
+                        "row": "A",
+                        "number": 1,
+                        "taken": false
+                    },
+                    {
+                        "row": "A",
+                        "number": 2,
+                        "taken": false
+                    },
+                    {
+                        "row": "A",
+                        "number": 3,
+                        "taken": false
+                    },
+                    {
+                        "row": "B",
+                        "number": 1,
+                        "taken": false
+                    },
+                    {
+                        "row": "B",
+                        "number": 2,
+                        "taken": false
+                    },
+                    {
+                        "row": "B",
+                        "number": 3,
+                        "taken": false
+                    }
+                ],
+                "movies": []
+            }
+        ]
+    }
+]

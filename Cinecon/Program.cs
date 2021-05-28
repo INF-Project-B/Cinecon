@@ -10,6 +10,7 @@ namespace Cinecon
             Console.Clear();
 
             JsonHelper.LoadJson();
+            return;
 
             StartChoice();
         }

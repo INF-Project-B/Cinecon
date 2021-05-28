@@ -9,6 +9,7 @@
             "is_activated": false,
             "payment_method": "iDeal",
             "room": 1,
+            "date": "2021-05-28T16:08:14.4903795+02:00",
             "seats": [
                 {
                     "row": "A",
@@ -28,6 +29,7 @@
             "is_activated": false,
             "payment_method": "PayPal",
             "room": 1,
+            "date": "2021-05-28T16:08:14.4903795+02:00",
             "seats": [
                 {
                     "row": "A",
