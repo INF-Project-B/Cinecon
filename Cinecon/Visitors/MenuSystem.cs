@@ -108,6 +108,6 @@ namespace Cinecon
                 _menuCart.Add(new KeyValuePair<string, decimal>($"{menuItem} {itemTypeData.Key.ToLower()} - {itemTypeData.Value:0.00}", itemTypeData.Value));
                 ShowMenu();
             }
-        }
+        }//ShowFilms
     }
 }

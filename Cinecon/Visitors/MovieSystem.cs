@@ -11,7 +11,7 @@ namespace Cinecon
     public static class MovieSystem
     {
         private static List<KeyValuePair<string, Action>> _genres;
-        private static KeyValuePair<string, string[]> _dayAndTimes;        
+        private static KeyValuePair<string, string[]> _dayAndTimes;
 
         public static void ShowFilms()
         {
@@ -21,17 +21,11 @@ namespace Cinecon
 
             var movies = new Dictionary<string, Action>
             {
-                ["Filters"] = ShowFilters
+                {"Zoek films op filters" , ShowFilters },
+                {"Bekijk alle films", ListOfFilms }
             };
 
-            foreach (var movie in JsonHelper.Movies)
-            {
-                if (_genres?.Count > 0 && movie.Genres.Intersect(_genres.Select(x => x.Key)).Count() == 0)
-                    continue;
-                if (_dayAndTimes.Key != null && _dayAndTimes.Value.Length > 0 && !movie.Days[_dayAndTimes.Key.ToLower()].Intersect(_dayAndTimes.Value).Any())
-                    continue;
-                movies[movie.Title] = null;
-            }
+            // r.44
 
             var movieMenu = new ChoiceMenu(movies, true);
 
