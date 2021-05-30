@@ -39,6 +39,28 @@ namespace Cinecon
                 ShowFilmInfo(movieChoice.Key);
         }
 
+
+        public static void ListOfFilms()
+        {
+            ConsoleHelper.LogoType = LogoType.Films;
+            ConsoleHelper.Breadcrumb = $"Films / Alle films";
+
+            var listofmovies = new Dictionary<string, Action>();
+        
+            foreach (var movie in JsonHelper.Movies)
+                listofmovies[movie.Title] = null;
+
+            var movieChoiceList = new ChoiceMenu(listofmovies, true);
+            var filmChoice = movieChoiceList.MakeChoice();
+            if (filmChoice.Key == "Terug")
+                ShowFilms();
+            else
+                ShowFilmInfo(filmChoice.Key);
+        }
+
+
+
+
         public static void ShowFilmInfo(string movieName)
         {
             ConsoleHelper.LogoType = LogoType.Films;
@@ -61,6 +83,9 @@ namespace Cinecon
                 ShowDateAndTime(movie);
         }
         
+
+
+
         private static void ShowDateAndTime(Movie movie)
         {
             ConsoleHelper.LogoType = LogoType.Films;
