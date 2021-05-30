@@ -123,7 +123,7 @@ namespace Cinecon
                 Credentials = new NetworkCredential(emailData.Email, emailData.Password),
                 EnableSsl = true
             };
-            var seats = $"{(reservation.Seats.Count() > 1 ? "stoelen zijn: " : "stoel is: ")}";
+            var seats = $"{(reservation.Seats.Count() > 1 ? "stoelen zijn: " : "stoel is ")}";
             var count = 1;
             foreach (var seat in reservation.Seats)
             {
