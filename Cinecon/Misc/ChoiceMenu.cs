@@ -213,7 +213,7 @@ namespace Cinecon
                                 choices.Add(choice);
                             else
                                 choices.Remove(choice);
-                            if (!room.Seats.FirstOrDefault(x => $"{ x.Row}{ (x.Number < 10 ? "0" : "")}{ x.Number}" == choice.Key).IsTaken)
+                            if (room.Seats.FirstOrDefault(x => $"{ x.Row}{ (x.Number < 10 ? "0" : "")}{ x.Number}" == choice.Key).IsTaken)
                             {
                                 WriteAllMenu(indexY, indexX, choices, room: room, takenSeat: room.Seats.FirstOrDefault(x => $"{ x.Row}{ (x.Number < 10 ? "0" : "")}{ x.Number}" == choice.Key).IsTaken);
                                 Console.Clear();
