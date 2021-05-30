@@ -123,6 +123,13 @@ namespace Cinecon
                 Credentials = new NetworkCredential(emailData.Email, emailData.Password),
                 EnableSsl = true
             };
+            var seats = $"{(reservation.Seats.Count() > 1 ? "stoelen zijn: " : "stoel is: ")}";
+            var count = 1;
+            foreach (var seat in reservation.Seats)
+            {
+                seats += $"{seat.Row}{seat.Number}{(reservation.Seats.Count()-1 == count ? " en " : reservation.Seats.Count() > count ? ", " : "")}";
+                count++;
+            }
 
             var body = emailData.Body
                 .Replace("[NAME]", reservation.Name)
@@ -130,6 +137,7 @@ namespace Cinecon
                 .Replace("[EMAIL]", reservation.Email)
                 .Replace("[PAYMENT_METHOD]", reservation.PaymentMethod)
                 .Replace("[MOVIE_TITLE]", reservation.Movie.Title)
+                .Replace("[SEATS]", seats)
                 .Replace("[MOVIE_DESCRIPTION]", reservation.Movie.Description)
                 .Replace("[ROOM]", reservation.Movie.Room.ToString());
 
