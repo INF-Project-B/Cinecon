@@ -7,13 +7,13 @@ namespace Cinecon
     public static class MovieSystem
     {
         private static List<KeyValuePair<string, Action>> _genres;
-        private static KeyValuePair<string, string[]> _dayAndTimes;        
+        private static KeyValuePair<DateTime, string[]> _dayAndTimes;        
 
         public static void ShowFilms()
         {
             ConsoleHelper.LogoType = LogoType.Films;
             ConsoleHelper.Breadcrumb = $"Genres: {(_genres?.Count > 0 ? string.Join(", ", _genres.Select(x => x.Key)) : "Alle")}\n" +
-                $"   Tijden: {(_dayAndTimes.Key != null && _dayAndTimes.Value.Length > 0 ? $"{_dayAndTimes.Key} om {string.Join(", ", _dayAndTimes.Value)}" : "Alle") }";
+                $"   Tijden: {(_dayAndTimes.Key != default && _dayAndTimes.Value.Length > 0 ? $"{_dayAndTimes.Key.DayOfWeek} {_dayAndTimes.Key:dd/MM} om {string.Join(", ", _dayAndTimes.Value)}" : "Alle") }";
 
             var movies = new Dictionary<string, Action>
             {
@@ -24,7 +24,7 @@ namespace Cinecon
             {
                 if (_genres?.Count > 0 && movie.Genres.Intersect(_genres.Select(x => x.Key)).Count() == 0)
                     continue;
-                if (_dayAndTimes.Key != null && _dayAndTimes.Value.Length > 0 && !movie.Days[_dayAndTimes.Key.ToLower()].Intersect(_dayAndTimes.Value).Any())
+                if (_dayAndTimes.Key != default && _dayAndTimes.Value.Length > 0 && !movie.Times.Intersect(_dayAndTimes.Value).Any())
                     continue;
                 movies[movie.Title] = null;
             }
@@ -88,8 +88,8 @@ namespace Cinecon
 
             var listOfDays = new Dictionary<string,Action>();
 
-            foreach (var day in movie.Days.Where(x => x.Value.Any()))
-                listOfDays[day.Key.First().ToString().ToUpper() + day.Key.Substring(1)] = null;
+            foreach (var day in JsonHelper.Days.Where(x => x.Item2.Any(x => x.Movies.Any(x => x.Id == movie.Id))))
+                listOfDays[$"{day.Item1.DayOfWeek} - {day.Item1:dd/MM}"] = null;
 
             var msg = listOfDays.Count > 0 ? "" : "Geen dagen gevonden.";
             var dayChoiceMenu = new ChoiceMenu(listOfDays, true, msg);
@@ -98,7 +98,7 @@ namespace Cinecon
             if (dayChoice.Key == "Terug")
                 ShowDateAndTime(movie);
             else
-                ChooseFilmTime(movie, dayChoice.Key.ToLower());
+                ChooseFilmTime(movie, dayChoice.Key);
         }
 
         private static void ChooseFilmTime(Movie movie, string day)
@@ -107,24 +107,17 @@ namespace Cinecon
             ConsoleHelper.Breadcrumb = $"Films / {movie.Title} / Dagen & Tijden";
 
             var listOfTimes = new Dictionary<string, Action>();
-            foreach (var time in movie.Days[day])
+            foreach (var time in movie.Times)
                 listOfTimes[time] = null;
 
             var timeChoiceMenu = new ChoiceMenu(listOfTimes, true, listOfTimes.Count > 0 ? "" : "Geen tijden gevonden.");
 
-            var dayAndTime = new Dictionary<string, Action>();
-            if (_dayAndTimes.Value != null && _dayAndTimes.Key == day)
-            {
-                foreach (var time in _dayAndTimes.Value)
-                    dayAndTime[time] = null;
-            }
+            var timeChoice = timeChoiceMenu.MakeChoice();
 
-            var dateChoice = timeChoiceMenu.MakeChoice();
-
-            if (dateChoice.Key == "Terug")
+            if (timeChoice.Key == "Terug")
                 ChooseFilmDays(movie);
             else
-                ReservationSystem.ChooseTicketsAmount(movie, day.ToString(), dateChoice.Key.ToString()); 
+                ReservationSystem.ChooseTicketsAmount(movie, JsonHelper.Days.FirstOrDefault(x => x.Item1.ToString("dd/MM") == day.Split(" - ")[1]).Item1, timeChoice.Key); 
         }        
 
         private static void ShowFilters()
@@ -136,7 +129,7 @@ namespace Cinecon
             {
                 { "Genres", ShowGenresFilter },
                 { "Dag en tijden", ShowDaysFilter },
-                { "Reset filters", () => { _genres = null; _dayAndTimes = new KeyValuePair<string, string[]>(); } },
+                { "Reset filters", () => { _genres = null; _dayAndTimes = new KeyValuePair<DateTime, string[]>(); } },
             }, addBackChoice: true);
 
             var filtersChoice = filtersChoiceMenu.MakeChoice();
@@ -161,12 +154,12 @@ namespace Cinecon
 
             var dayChoiceMenu = new ChoiceMenu(dayOptions, true);
 
-            var dayChoice = dayChoiceMenu.MakeChoice(_dayAndTimes.Key != null ? new[] { _dayAndTimes.Key } : null);
+            var dayChoice = dayChoiceMenu.MakeChoice(_dayAndTimes.Key != default ? new[] { $"{_dayAndTimes.Key.DayOfWeek} - {_dayAndTimes.Key:dd/MM}" } : null);
 
             if (dayChoice.Key == "Terug")
                 ShowFilters();
             else
-                ShowTimes(JsonHelper.Days.FirstOrDefault(x => x.Item1.ToString("hh/MM") == dayChoice.Key.Split(" - ")[1]).Item1);
+                ShowTimes(JsonHelper.Days.FirstOrDefault(x => x.Item1.ToString("dd/MM") == dayChoice.Key.Split(" - ")[1]).Item1);
 
             static void ShowTimes(DateTime date)
             {
@@ -174,16 +167,17 @@ namespace Cinecon
 
                 var timeOptions = new Dictionary<string, Action>();
 
-                foreach (var movie in JsonHelper.Movies)
-                    foreach (var time in movie.Days[day.ToLower()])
-                        timeOptions[time] = null;
+                foreach (var room in JsonHelper.Days.FirstOrDefault(x => x.Item1 == date).Item2)
+                    foreach (var movie in room.Movies)
+                        foreach (var time in movie.Times)
+                            timeOptions[time] = null;
 
                 var text = timeOptions.Count > 0 ? "" : "   Geen tijden gevonden.";
 
                 var timeChoiceMenu = new ChoiceMenu(timeOptions, true, text);
 
                 var dayAndTimes = new Dictionary<string, Action>();
-                if (_dayAndTimes.Value != null && _dayAndTimes.Key == day)
+                if (_dayAndTimes.Value != null && _dayAndTimes.Key == date)
                 {
                     foreach (var time in _dayAndTimes.Value)
                         dayAndTimes[time] = null;
@@ -191,8 +185,8 @@ namespace Cinecon
 
                 var timeChoices = timeChoiceMenu.MakeMultipleChoice(dayAndTimes.ToList());
 
-                if (timeChoices.Count > 0 || _dayAndTimes.Key == day)
-                    _dayAndTimes = new KeyValuePair<string, string[]>(day, timeChoices.Select(x => x.Key).ToArray());
+                if (timeChoices.Count > 0 || _dayAndTimes.Key == date)
+                    _dayAndTimes = new KeyValuePair<DateTime, string[]>(date, timeChoices.Select(x => x.Key).ToArray());
 
                 ShowDaysFilter();
             }

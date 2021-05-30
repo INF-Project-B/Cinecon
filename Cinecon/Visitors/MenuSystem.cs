@@ -21,7 +21,7 @@ namespace Cinecon
             }
         }
 
-        public static void ShowMenuConfirmation()
+        public static void ShowMenuConfirmation(DateTime date)
         {
             ConsoleHelper.LogoType = LogoType.Films;
             ConsoleHelper.Breadcrumb = null;
@@ -29,12 +29,12 @@ namespace Cinecon
             var menuConfirmationChoice = ChoiceMenu.CreateConfirmationChoiceMenu("   Wil je het menu assortiment bekijken?\n").MakeChoice();
 
             if (menuConfirmationChoice.Key == "Ja")
-                ShowMenu();
+                ShowMenu(date);
             else
-                PaymentSystem.StartPaymentProcess();
+                PaymentSystem.StartPaymentProcess(date);
         }
 
-        private static void ShowMenu()
+        private static void ShowMenu(DateTime date)
         {
             ConsoleHelper.LogoType = LogoType.Menu;
             ConsoleHelper.Breadcrumb = "Films / Titel / Koop tickets / Menu";
@@ -52,19 +52,19 @@ namespace Cinecon
             var categoryChoice = categoryChoiceMenu.MakeChoice();
 
             if (categoryChoice.Key == "Terug")
-                ShowMenuConfirmation();
+                ShowMenuConfirmation(date);
             else if (categoryChoice.Key == "Winkelmand legen")
             {
                 _menuCart.Clear();
-                ShowMenu();
+                ShowMenu(date);
             }
             else if (categoryChoice.Key == "Ga door")
-                PaymentSystem.StartPaymentProcess();
+                PaymentSystem.StartPaymentProcess(date);
             else
-                ShowCategoryItems(JsonHelper.Menu.FirstOrDefault(x => x.Name == categoryChoice.Key));
+                ShowCategoryItems(JsonHelper.Menu.FirstOrDefault(x => x.Name == categoryChoice.Key), date);
         }
 
-        private static void ShowCategoryItems(MenuCategory category)
+        private static void ShowCategoryItems(MenuCategory category, DateTime date)
         {
             ConsoleHelper.LogoType = LogoType.Menu;
             ConsoleHelper.Breadcrumb = $"Categorie: {category.Name}";
@@ -79,12 +79,12 @@ namespace Cinecon
             var itemChoice = itemChoiceMenu.MakeChoice();
 
             if (itemChoice.Key == "Terug")
-                ShowMenu();
+                ShowMenu(date);
             else
-                ShowItemTypes(category, itemChoice.Key);
+                ShowItemTypes(category, itemChoice.Key, date);
         }
 
-        private static void ShowItemTypes(MenuCategory category, string menuItem)
+        private static void ShowItemTypes(MenuCategory category, string menuItem, DateTime date)
         {
             ConsoleHelper.LogoType = LogoType.Menu;
             ConsoleHelper.Breadcrumb += $"\n   Product: {menuItem}";
@@ -101,12 +101,12 @@ namespace Cinecon
             var typeChoice = typeChoiceMenu.MakeChoice();
 
             if (typeChoice.Key == "Terug")
-                ShowCategoryItems(category);
+                ShowCategoryItems(category, date);
             else
             {
                 var itemTypeData = itemTypes.FirstOrDefault(x => typeChoice.Key.Contains(x.Key));
                 _menuCart.Add(new KeyValuePair<string, decimal>($"{menuItem} {itemTypeData.Key.ToLower()} - {itemTypeData.Value:0.00}", itemTypeData.Value));
-                ShowMenu();
+                ShowMenu(date);
             }
         }
     }

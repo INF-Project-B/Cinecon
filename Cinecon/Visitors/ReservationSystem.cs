@@ -26,9 +26,9 @@ namespace Cinecon
 
             Room room = RoomManagement.GetRoom(movie.Room, date);
 
-            Console.Write($"   Hoeveel tickets wil je bestellen? ({room.Seats.Count(x => !x.IsTaken)} beschikbaar) -> ");
-
             int availableSeatsCount = room.Seats.Count(x => !x.IsTaken);
+
+            Console.Write($"   Hoeveel tickets wil je bestellen? ({availableSeatsCount} beschikbaar) -> ");
 
             if (!int.TryParse(Console.ReadLine(), out _ticketsAmount) || _ticketsAmount < 1 || _ticketsAmount > availableSeatsCount)
             {
@@ -89,7 +89,7 @@ namespace Cinecon
             if (seatChoices.Item1 == "Terug")
                 ShowFilmInfo(SelectedMovie.Title);
             if (seatChoices.Item1 == "Ga door")
-                MenuSystem.ShowMenuConfirmation();
+                MenuSystem.ShowMenuConfirmation(date);
         }
     }
 }
