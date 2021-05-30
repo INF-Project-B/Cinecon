@@ -2,41 +2,5 @@
     "payment_methods": [ "iDeal", "PayPal", "Credit Card" ],
 
     "reservations": [
-        {
-            "code": "SZHD7",
-            "name": "Hayk",
-            "email": "h@ykmarkarian.com",
-            "is_activated": false,
-            "payment_method": "iDeal",
-            "room": 1,
-            "date": "2021-05-28T16:08:14.4903795+02:00",
-            "seats": [
-                {
-                    "row": "A",
-                    "number": 1
-                },
-                {
-                    "row": "B",
-                    "number": 2
-                }
-            ],
-            "total_price": 20.0
-        },
-        {
-            "code": "RJF6F",
-            "name": "Arian",
-            "email": "test@test.nl",
-            "is_activated": false,
-            "payment_method": "PayPal",
-            "room": 1,
-            "date": "2021-05-28T16:08:14.4903795+02:00",
-            "seats": [
-                {
-                    "row": "A",
-                    "number": 2
-                }
-            ],
-            "total_price": 15.0
-        }
     ]
 }
