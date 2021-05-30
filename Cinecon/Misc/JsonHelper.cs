@@ -15,7 +15,6 @@ namespace Cinecon
         public static List<MenuCategory> Menu { get; set; }
         public static ReservationData ReservationData { get; set; }
         public static List<Tuple<DateTime, List<Room>>> Days { get; set; }
-        //public static List<Room> Rooms { get; set; }
         public static EmailData EmailData { get; set; }
 
         public static void LoadJson()
@@ -23,7 +22,6 @@ namespace Cinecon
             AddMovies();
             AddGenres();
             AddMenu();
-            //AddRooms();
             AddDays();
             AddReservations();
             AddEmailData();
@@ -41,9 +39,12 @@ namespace Cinecon
             for (int i = 0; i < 15; i++)
             {
                 var date = today.AddDays(i);
-                days.Add(Tuple.Create(date, daysJson[0]["item2"].ToObject<List<Room>>()));
+                var rooms = daysJson[0]["item2"].ToObject<List<Room>>();
 
-                Console.WriteLine(date.DayOfWeek);
+                foreach (var room in rooms)
+                    room.Date = date;
+
+                days.Add(Tuple.Create(date, rooms));
             }
 
             Days = days;
@@ -100,9 +101,6 @@ namespace Cinecon
             ReservationData = reservationData;
         }
 
-        //private static void AddRooms()
-        //    => Rooms = JsonConvert.DeserializeObject<List<Room>>(File.ReadAllText("Assets/rooms.json"));
-
         private static void AddEmailData()
             => EmailData = JsonConvert.DeserializeObject<EmailData>(File.ReadAllText("Assets/email.json"));
 
@@ -112,7 +110,6 @@ namespace Cinecon
 
             File.WriteAllText("Assets/movies.json", JsonConvert.SerializeObject(Movies, Formatting.Indented, settings));
             File.WriteAllText("Assets/reservations.json", JsonConvert.SerializeObject(ReservationData, Formatting.Indented, settings));
-            //File.WriteAllText("Assets/rooms.json", JsonConvert.SerializeObject(Rooms, Formatting.Indented, settings));
             File.WriteAllText("Assets/days.json", JsonConvert.SerializeObject(Days, Formatting.Indented, settings));
 
             var menuJson = new JObject();
