@@ -73,10 +73,10 @@ namespace Cinecon
                         Console.Clear();
                         return _choices[index];
                     case ConsoleKey.Backspace:
-                        if (_choices.Any(x => x.Key == "Terug"))
+                        if (_choices.Any(x => x.Key == "Terug" || x.Key == "Filters toepassen"))
                         {
                             Console.Clear();
-                            return _choices.FirstOrDefault(x => x.Key == "Terug");
+                            return _choices.FirstOrDefault(x => x.Key == "Terug" || x.Key == "Filters toepassen");
                         }
                         break;
                 }
