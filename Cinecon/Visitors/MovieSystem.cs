@@ -152,6 +152,7 @@ namespace Cinecon
         }
 
 
+
         public static void ShowFilms()
         {
             ConsoleHelper.LogoType = LogoType.Films;
@@ -161,7 +162,7 @@ namespace Cinecon
 
             var movies = new Dictionary<string, Action>
             {
-                { "Filter op Genres", ShowGenresFilter },
+                { "Filter op genres", ShowGenresFilter },
                 { "Filter op dagen en tijden", ShowDaysFilter },
                 { "Reset filters\n", () => { _genres = null; _dayAndTimes = new KeyValuePair<string, string[]>(); } },
                 { "Bekijk alle films", ListOfFilms }
