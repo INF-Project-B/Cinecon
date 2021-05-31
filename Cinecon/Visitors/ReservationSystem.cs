@@ -47,7 +47,7 @@ namespace Cinecon
             ConsoleHelper.Breadcrumb = $"Films / {SelectedMovie.Title} / Dagen en tijd / Aantal";
 
             var confirmationMenu = ChoiceMenu.CreateConfirmationChoiceMenu($"   Film: {SelectedMovie.Title}\n   Aantal tickets: {_ticketsAmount}\n   " +
-            $"Dag en tijd: {day.First().ToString().ToUpper() + day.Substring(1)} om {time} uur.\n\n   Gaat je hiermee akkoord?\n");
+            $"Dag en tijd: {day.First().ToString().ToUpper() + day.Substring(1)} om {time} uur.\n\n   Gaat u hiermee akkoord?\n");
 
             Console.Clear();
 
