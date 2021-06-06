@@ -160,13 +160,24 @@ namespace Cinecon
             ConsoleHelper.Breadcrumb = $"Genres: {(_genres?.Count > 0 ? string.Join(", ", _genres.Select(x => x.Key)) : "Alle")}\n" +
                 $"   Tijden: {(_dayAndTimes.Key != null && _dayAndTimes.Value.Length > 0 ? $"{_dayAndTimes.Key} om {string.Join(", ", _dayAndTimes.Value)}" : "Alle") }";
 
-            var movies = new Dictionary<string, Action>
+            Dictionary<string, Action> movies;
+            if (_genres == null)
             {
-                { "Filter op genres", ShowGenresFilter },
-                { "Filter op dagen en tijden", ShowDaysFilter },
-                { "Reset filters\n", () => { _genres = null; _dayAndTimes = new KeyValuePair<string, string[]>(); } },
-                { "Bekijk alle films", ListOfFilms }
-            };
+                movies = new Dictionary<string, Action>
+                {
+                    { "Filter op genres", ShowGenresFilter },
+                    { "Filter op dagen", ShowDaysFilter },
+                    { "Bekijk alle films", ListOfFilms }
+                };
+            }
+            else
+                movies = new Dictionary<string, Action>
+                {
+                    { "Filter op genres", ShowGenresFilter },
+                    { "Filter op dagen", ShowDaysFilter },
+                    { "Reset filters", () => { _genres = null; _dayAndTimes = new KeyValuePair<string, string[]>(); } },
+                    { "Bekijk alle films", ListOfFilms }
+                };
 
             var movieMenu = new ChoiceMenu(movies, true);
 
@@ -176,14 +187,14 @@ namespace Cinecon
 
             if (movieChoice.Key == "Terug")
                 Program.StartChoice();
-            else if (movieChoice.Key == "Reset filters\n")
+            else if (movieChoice.Key == "Reset filters")
                 ShowFilms();
         }
 
         private static void ShowDaysFilter() 
         {
             ConsoleHelper.LogoType = LogoType.Films;
-            ConsoleHelper.Breadcrumb = "Films / Filters / Dag en tijden";
+            ConsoleHelper.Breadcrumb = "Films / Filters / Dagen";
 
             var dayOptions = new Dictionary<string, Action>();
             
@@ -203,30 +214,22 @@ namespace Cinecon
             {
                 ConsoleHelper.Breadcrumb += $" / {day}";
 
-                var timeOptions = new Dictionary<string, Action>();
+                var filmTimes = new Dictionary<string, Action>();
 
                 foreach (var movie in JsonHelper.Movies)
                     foreach (var time in movie.Days[day.ToLower()])
-                        timeOptions[time] = null;
+                        filmTimes[$"{time} {movie.Title}"] = null;
 
-                var text = timeOptions.Count > 0 ? "" : "   Geen tijden gevonden.";
+                var text = filmTimes.Count > 0 ? "" : "   Geen tijden gevonden.";
 
-                var timeChoiceMenu = new ChoiceMenu(timeOptions, false, text, addExtraButton: true); 
+                var timeChoiceMenu = new ChoiceMenu(filmTimes, true, text);
 
-                var dayAndTimes = new Dictionary<string, Action>();
-                if (_dayAndTimes.Value != null && _dayAndTimes.Key == day)
-                {
-                    foreach (var time in _dayAndTimes.Value)
-                        dayAndTimes[time] = null;
-                }
+                var timeChoices = timeChoiceMenu.MakeChoice();
 
-                var timeChoices = timeChoiceMenu.MakeMultipleChoice(dayAndTimes.ToList());
-
-                if (timeChoices.Count > 0 || _dayAndTimes.Key == day)
-                    _dayAndTimes = new KeyValuePair<string, string[]>(day, timeChoices.Select(x => x.Key).ToArray());
-
-             
-                ShowFilteredFilms();
+                if (timeChoices.Key == "Terug")
+                    ShowDaysFilter();
+                else
+                    ReservationSystem.ChooseTicketsAmount(JsonHelper.Movies.FirstOrDefault(x => x.Title == timeChoices.Key[12..]), day, timeChoices.Key[0..11]);
             }
         }
 
