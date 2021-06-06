@@ -10,7 +10,7 @@ namespace Cinecon
 {
     public static class PaymentSystem
     {
-        public static void StartPaymentProcess()
+        public static void StartPaymentProcess(DateTime date)
         {
             var movie = ReservationSystem.SelectedMovie;
 
@@ -50,12 +50,12 @@ namespace Cinecon
             var paymentMethodChoice = new ChoiceMenu(paymentMethods, true, "   Kies een betaalmethode\n").MakeChoice();
 
             if (paymentMethodChoice.Key == "Terug")
-                ReservationSystem.ShowSeats();
+                ReservationSystem.ShowSeats(date);
             else
-                FinishPaymentProcess(movie, paymentMethodChoice.Key, name, email);
+                FinishPaymentProcess(movie, paymentMethodChoice.Key, name, email, date);
         }
 
-        private static void FinishPaymentProcess(Movie movie, string paymentMethod, string name, string email)
+        private static void FinishPaymentProcess(Movie movie, string paymentMethod, string name, string email, DateTime date)
         {
             ConsoleHelper.LogoType = LogoType.Films;
             ConsoleHelper.Breadcrumb = $"Films / {movie.Title} / Koop tickets / Betaling";
@@ -65,7 +65,7 @@ namespace Cinecon
 
             if (confirmationChoice.Key != "Ja")
             {
-                StartPaymentProcess();
+                StartPaymentProcess(date);
                 return;
             }
 
@@ -77,13 +77,14 @@ namespace Cinecon
                 PaymentMethod = paymentMethod,
                 IsActivated = false,
                 Room = movie.Room,
+                Date = date,
                 Movie = movie,
                 Seats = ReservationSystem.SelectedSeats
             };
 
             JsonHelper.ReservationData.Reservations.Add(reservation);
 
-            foreach (var seat in RoomManagement.GetRoom(movie.Room).Seats)
+            foreach (var seat in RoomManagement.GetRoom(movie.Room, date).Seats)
                 if (reservation.Seats.Any(x => x.Row == seat.Row && x.Number == seat.Number))
                     seat.IsTaken = true;
                 
@@ -123,6 +124,13 @@ namespace Cinecon
                 Credentials = new NetworkCredential(emailData.Email, emailData.Password),
                 EnableSsl = true
             };
+            var seats = $"{(reservation.Seats.Count() > 1 ? "stoelen zijn: " : "stoel is ")}";
+            var count = 1;
+            foreach (var seat in reservation.Seats)
+            {
+                seats += $"{seat.Row}{seat.Number}{(reservation.Seats.Count()-1 == count ? " en " : reservation.Seats.Count() > count ? ", " : "")}";
+                count++;
+            }
 
             var body = emailData.Body
                 .Replace("[NAME]", reservation.Name)
@@ -130,6 +138,8 @@ namespace Cinecon
                 .Replace("[EMAIL]", reservation.Email)
                 .Replace("[PAYMENT_METHOD]", reservation.PaymentMethod)
                 .Replace("[MOVIE_TITLE]", reservation.Movie.Title)
+                .Replace("[SEATS]", seats)
+                .Replace("[MENU]", MenuSystem.MenuCartText)
                 .Replace("[MOVIE_DESCRIPTION]", reservation.Movie.Description)
                 .Replace("[ROOM]", reservation.Movie.Room.ToString());
 

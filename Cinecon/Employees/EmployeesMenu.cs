@@ -13,13 +13,15 @@ namespace Cinecon
             var employeesMenu = new ChoiceMenu(new Dictionary<string, Action>
             {
                 { "Reserveringscodes", ReservationManagement.ShowReservations },
-                { "Zalen", RoomManagement.ShowRoomOptions }
+                { "Zalen", null }
             }, addBackChoice: true);
 
             var employeesMenuChoice = employeesMenu.MakeChoice();
 
             if (employeesMenuChoice.Key == "Terug")
                 Program.StartChoice();
+            else if (employeesMenuChoice.Key == "Zalen")
+                RoomManagement.ShowRoomOptions();
             else
                 employeesMenuChoice.Value();
         }
