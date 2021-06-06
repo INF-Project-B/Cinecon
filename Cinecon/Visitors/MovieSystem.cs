@@ -7,21 +7,17 @@ namespace Cinecon
     public static class MovieSystem
     {
         private static List<KeyValuePair<string, Action>> _genres;
-        private static KeyValuePair<DateTime, string[]> _dayAndTimes;        
 
         public static void ShowFilteredFilms()
         {
             ConsoleHelper.LogoType = LogoType.Films;
-            ConsoleHelper.Breadcrumb = $"Genres: {(_genres?.Count > 0 ? string.Join(", ", _genres.Select(x => x.Key)) : "Alle")}\n" +
-                $"   Tijden: {(_dayAndTimes.Key != default && _dayAndTimes.Value.Length > 0 ? $"{_dayAndTimes.Key.DayOfWeek} {_dayAndTimes.Key:dd/MM} om {string.Join(", ", _dayAndTimes.Value)}" : "Alle") }";
+            ConsoleHelper.Breadcrumb = $"Genres: {(_genres?.Count > 0 ? string.Join(", ", _genres.Select(x => x.Key)) : "Alle")}\n";
 
             var movies = new Dictionary<string, Action>();
 
             foreach (var movie in JsonHelper.Movies)
             {
                 if (_genres?.Count > 0 && movie.Genres.Intersect(_genres.Select(x => x.Key)).Count() == 0)
-                    continue;
-                if (_dayAndTimes.Key != default && _dayAndTimes.Value.Length > 0 && !movie.Times.Intersect(_dayAndTimes.Value).Any())
                     continue;
                 movies[movie.Title] = null;
             }
@@ -109,7 +105,10 @@ namespace Cinecon
             var listOfDays = new Dictionary<string,Action>();
 
             foreach (var day in JsonHelper.Days.Where(x => x.Item2.Any(x => x.Movies.Any(x => x.Id == movie.Id))))
-                listOfDays[$"{day.Item1.DayOfWeek} - {day.Item1:dd/MM}"] = null;
+            {
+                var date = day.Item1.ToString("dddd dd MMMM");
+                listOfDays[char.ToUpper(date[0]) + date[1..]] = null;
+            }
 
             var msg = listOfDays.Count > 0 ? "" : "Geen dagen gevonden.";
             var dayChoiceMenu = new ChoiceMenu(listOfDays, true, msg);
@@ -137,7 +136,7 @@ namespace Cinecon
             if (timeChoice.Key == "Terug")
                 ChooseFilmDays(movie);
             else
-                ReservationSystem.ChooseTicketsAmount(movie, JsonHelper.Days.FirstOrDefault(x => x.Item1.ToString("dd/MM") == day.Split(" - ")[1]).Item1, timeChoice.Key); 
+                ReservationSystem.ChooseTicketsAmount(movie, JsonHelper.Days.FirstOrDefault(x => x.Item1.ToString("dddd dd MMMM") == day.ToLower()).Item1, timeChoice.Key); 
         }        
 
 
@@ -146,8 +145,7 @@ namespace Cinecon
         {
             ConsoleHelper.LogoType = LogoType.Films;
 
-            ConsoleHelper.Breadcrumb = $"Genres: {(_genres?.Count > 0 ? string.Join(", ", _genres.Select(x => x.Key)) : "Alle")}\n" +
-                $"   Tijden: {(_dayAndTimes.Key != null && _dayAndTimes.Value.Length > 0 ? $"{_dayAndTimes.Key} om {string.Join(", ", _dayAndTimes.Value)}" : "Alle") }";
+            ConsoleHelper.Breadcrumb = $"Genres: {(_genres?.Count > 0 ? string.Join(", ", _genres.Select(x => x.Key)) : "Alle")}\n";
 
             Dictionary<string, Action> movies = new Dictionary<string, Action>
             {
@@ -159,7 +157,7 @@ namespace Cinecon
 
             else
             {
-                movies["Reset filters"] = () => { _genres = null; _dayAndTimes = new KeyValuePair<string, string[]>(); };
+                movies["Reset filters"] = () => { _genres = null; };
                 movies["Bekijk alle films"] = ListOfFilms;
             }
             var movieMenu = new ChoiceMenu(movies, true);
@@ -180,18 +178,21 @@ namespace Cinecon
             ConsoleHelper.Breadcrumb = "Films / Filters / Dagen";
 
             var dayOptions = new Dictionary<string, Action>();
-            
-            foreach (var day in JsonHelper.Days)
-                dayOptions[$"{day.Item1.DayOfWeek} - {day.Item1:dd/MM}"] = null;
+
+            foreach (var day in JsonHelper.Days) 
+            {
+                var date = day.Item1.ToString("dddd dd MMMM");
+                dayOptions[char.ToUpper(date[0]) + date[1..]] = null;
+            }
 
             var dayChoiceMenu = new ChoiceMenu(dayOptions, true);
 
-            var dayChoice = dayChoiceMenu.MakeChoice(_dayAndTimes.Key != default ? new[] { $"{_dayAndTimes.Key.DayOfWeek} - {_dayAndTimes.Key:dd/MM}" } : null);
+            var dayChoice = dayChoiceMenu.MakeChoice();
 
             if (dayChoice.Key == "Terug")
-                ShowFilms(); 
+                ShowFilms();
             else
-                ShowTimes(JsonHelper.Days.FirstOrDefault(x => x.Item1.ToString("dd/MM") == dayChoice.Key.Split(" - ")[1]).Item1);
+                ShowTimes(JsonHelper.Days.FirstOrDefault(x => x.Item1.ToString("dddd dd MMMM") == dayChoice.Key.ToLower()).Item1);
 
             static void ShowTimes(DateTime date)
             {
@@ -202,28 +203,19 @@ namespace Cinecon
                 foreach (var room in JsonHelper.Days.FirstOrDefault(x => x.Item1 == date).Item2)
                     foreach (var movie in room.Movies)
                         foreach (var time in movie.Times)
-                            timeOptions[time] = null;
+                            filmTimes[$"{time} {movie.Title}"] = null;
 
-                var text = timeOptions.Count > 0 ? "" : "   Geen tijden gevonden.";
+                var text = filmTimes.Count > 0 ? "" : "   Geen tijden gevonden.";
 
-                var timeChoiceMenu = new ChoiceMenu(timeOptions, true, text);
+                var filmTimeMenu = new ChoiceMenu(filmTimes, true, text);
 
-                var dayAndTimes = new Dictionary<string, Action>();
-                if (_dayAndTimes.Value != null && _dayAndTimes.Key == date)
-                {
-                    foreach (var time in _dayAndTimes.Value)
-                        dayAndTimes[time] = null;
-                }
+                var filmTimeChoice = filmTimeMenu.MakeChoice();
 
-                var timeChoiceMenu = new ChoiceMenu(filmTimes, true, text);
-
-                if (timeChoices.Count > 0 || _dayAndTimes.Key == date)
-                    _dayAndTimes = new KeyValuePair<DateTime, string[]>(date, timeChoices.Select(x => x.Key).ToArray());
-
-                if (timeChoices.Key == "Terug")
+                if (filmTimeChoice.Key == "Terug")
                     ShowDaysFilter();
                 else
-                    ReservationSystem.ChooseTicketsAmount(JsonHelper.Movies.FirstOrDefault(x => x.Title == timeChoices.Key[12..]), day, timeChoices.Key[0..11]);
+                    ReservationSystem.ChooseTicketsAmount(JsonHelper.Movies.FirstOrDefault(x => x.Title == filmTimeChoice.Key[12..]), date, filmTimeChoice.Key[0..11]);
+                
             }
         }
 

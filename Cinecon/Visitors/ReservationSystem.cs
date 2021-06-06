@@ -9,6 +9,7 @@ namespace Cinecon
     {
         public static Movie SelectedMovie { get; private set; }
         public static List<Seat> SelectedSeats { get; private set; }
+        public static string Time { get; private set; }
         private static int _ticketsAmount;
 
         public static void ChooseTicketsAmount(Movie movie, DateTime date, string time, bool error = false)
@@ -17,8 +18,10 @@ namespace Cinecon
 
             Console.CursorVisible = true;
 
+            Time = time[0..5];
+
             Console.Clear();
-            ConsoleHelper.Breadcrumb = $"Films / {movie.Title} / {date.DayOfWeek} / {time} / Tickets";
+            ConsoleHelper.Breadcrumb = $"Films / {movie.Title} / {date:dddd} / {time} / Tickets";
             ConsoleHelper.WriteLogoAndBreadcrumb();
 
             if (error)
@@ -47,7 +50,7 @@ namespace Cinecon
             ConsoleHelper.Breadcrumb = $"Films / {SelectedMovie.Title} / Dagen en tijd / Aantal";
 
             var confirmationMenu = ChoiceMenu.CreateConfirmationChoiceMenu($"   Film: {SelectedMovie.Title}\n   Aantal tickets: {_ticketsAmount}\n   " +
-            $"Dag en tijd: {date.DayOfWeek} om {time} uur.\n\n   Gaat je hiermee akkoord?\n");
+            $"Dag en tijd: {date:dddd} om {time} uur.\n\n   Gaat je hiermee akkoord?\n");
 
             Console.Clear();
 
