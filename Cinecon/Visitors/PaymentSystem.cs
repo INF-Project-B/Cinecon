@@ -139,6 +139,8 @@ namespace Cinecon
                 .Replace("[PAYMENT_METHOD]", reservation.PaymentMethod)
                 .Replace("[MOVIE_TITLE]", reservation.Movie.Title)
                 .Replace("[SEATS]", seats)
+                .Replace("[DATE]", reservation.Date.ToString("dddd dd MMMM"))
+                .Replace("[TIME]", ReservationSystem.Time)
                 .Replace("[MENU]", MenuSystem.MenuCartText)
                 .Replace("[MOVIE_DESCRIPTION]", reservation.Movie.Description)
                 .Replace("[ROOM]", reservation.Movie.Room.ToString());
