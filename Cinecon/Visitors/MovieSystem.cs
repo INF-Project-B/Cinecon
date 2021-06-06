@@ -160,25 +160,19 @@ namespace Cinecon
             ConsoleHelper.Breadcrumb = $"Genres: {(_genres?.Count > 0 ? string.Join(", ", _genres.Select(x => x.Key)) : "Alle")}\n" +
                 $"   Tijden: {(_dayAndTimes.Key != null && _dayAndTimes.Value.Length > 0 ? $"{_dayAndTimes.Key} om {string.Join(", ", _dayAndTimes.Value)}" : "Alle") }";
 
-            Dictionary<string, Action> movies;
-            if (_genres == null)
+            Dictionary<string, Action> movies = new Dictionary<string, Action>
             {
-                movies = new Dictionary<string, Action>
-                {
                     { "Filter op genres", ShowGenresFilter },
-                    { "Filter op dagen", ShowDaysFilter },
-                    { "Bekijk alle films", ListOfFilms }
-                };
-            }
-            else
-                movies = new Dictionary<string, Action>
-                {
-                    { "Filter op genres", ShowGenresFilter },
-                    { "Filter op dagen", ShowDaysFilter },
-                    { "Reset filters", () => { _genres = null; _dayAndTimes = new KeyValuePair<string, string[]>(); } },
-                    { "Bekijk alle films", ListOfFilms }
-                };
+                    { "Filter op dagen", ShowDaysFilter }
+            };
+            if (_genres == null)
+                movies["Bekijk alle films"] = ListOfFilms;
 
+            else
+            {
+                movies["Reset filters"] = () => { _genres = null; _dayAndTimes = new KeyValuePair<string, string[]>(); };
+                movies["Bekijk alle films"] = ListOfFilms;
+            }
             var movieMenu = new ChoiceMenu(movies, true);
 
             var movieChoice = movieMenu.MakeChoice();
@@ -248,11 +242,6 @@ namespace Cinecon
             _genres = genreChoiceMenu.MakeMultipleChoice(_genres);
         
             ShowFilteredFilms();
-
-            
-
-
-
         }
     }
 }
