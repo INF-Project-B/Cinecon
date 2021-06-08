@@ -105,7 +105,10 @@ namespace Cinecon
             var dateOptions = new Dictionary<string, Action>();
 
             foreach (var date in JsonHelper.Days)
-                dateOptions[$"{date.Item1.DayOfWeek} - {date.Item1:dd/MM}"] = null;
+            {
+                var day = date.Item1.ToString("dddd dd MMMM");
+                dateOptions[char.ToUpper(day[0]) + day[1..]] = null;
+            }
 
             var dateOptionsMenu = new ChoiceMenu(dateOptions, true, "   Voor welke dag wilt u de zalen bekijken?\n");
 
@@ -117,7 +120,7 @@ namespace Cinecon
                 return default;
             }
             else if (dateChoice.Value == null)
-                return JsonHelper.Days.FirstOrDefault(x => x.Item1.ToString("dd/MM") == dateChoice.Key.Split(" - ")[1]).Item1;
+                return JsonHelper.Days.FirstOrDefault(x => x.Item1.ToString("dddd dd MMMM") == dateChoice.Key.ToLower()).Item1;
             else
                 return default;
         }
