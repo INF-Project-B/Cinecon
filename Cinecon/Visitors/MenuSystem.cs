@@ -31,7 +31,10 @@ namespace Cinecon
             if (menuConfirmationChoice.Key == "Ja")
                 ShowMenu(date);
             else
+            {
+                _menuCart.Clear();
                 PaymentSystem.StartPaymentProcess(date);
+            }
         }
 
         private static void ShowMenu(DateTime date)
