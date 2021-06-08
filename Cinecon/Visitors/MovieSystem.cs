@@ -104,10 +104,10 @@ namespace Cinecon
 
             var listOfDays = new Dictionary<string,Action>();
 
-            foreach (var day in JsonHelper.Days.Where(x => x.Item2.Any(x => x.Movies.Any(x => x.Id == movie.Id))))
+            foreach (var date in JsonHelper.Days.Where(x => x.Item2.Any(x => x.Movies.Any(x => x.Id == movie.Id))))
             {
-                var date = day.Item1.ToString("dddd dd MMMM");
-                listOfDays[char.ToUpper(date[0]) + date[1..]] = null;
+                var day = $"{ConsoleHelper.TranslateDate(date.Item1.ToString("dddd"))} {date.Item1:dd} {ConsoleHelper.TranslateDate(date.Item1.ToString("MMMM"))}";
+                listOfDays[day] = null;
             }
 
             var msg = listOfDays.Count > 0 ? "" : "Geen dagen gevonden.";
@@ -136,7 +136,7 @@ namespace Cinecon
             if (timeChoice.Key == "Terug")
                 ChooseFilmDays(movie);
             else
-                ReservationSystem.ChooseTicketsAmount(movie, JsonHelper.Days.FirstOrDefault(x => x.Item1.ToString("dddd dd MMMM") == day.ToLower()).Item1, timeChoice.Key); 
+                ReservationSystem.ChooseTicketsAmount(movie, JsonHelper.Days.FirstOrDefault(x => $"{ConsoleHelper.TranslateDate(x.Item1.ToString("dddd"))} {x.Item1:dd} {ConsoleHelper.TranslateDate(x.Item1.ToString("MMMM"))}" == day.ToLower()).Item1, timeChoice.Key);
         }        
 
 
@@ -179,10 +179,10 @@ namespace Cinecon
 
             var dayOptions = new Dictionary<string, Action>();
 
-            foreach (var day in JsonHelper.Days) 
+            foreach (var date in JsonHelper.Days) 
             {
-                var date = day.Item1.ToString("dddd dd MMMM");
-                dayOptions[char.ToUpper(date[0]) + date[1..]] = null;
+                var day = $"{ConsoleHelper.TranslateDate(date.Item1.ToString("dddd"))} {date.Item1:dd} {ConsoleHelper.TranslateDate(date.Item1.ToString("MMMM"))}";
+                dayOptions[day] = null;
             }
 
             var dayChoiceMenu = new ChoiceMenu(dayOptions, true);
@@ -192,7 +192,7 @@ namespace Cinecon
             if (dayChoice.Key == "Terug")
                 ShowFilms();
             else
-                ShowTimes(JsonHelper.Days.FirstOrDefault(x => x.Item1.ToString("dddd dd MMMM") == dayChoice.Key.ToLower()).Item1);
+                ShowTimes(JsonHelper.Days.FirstOrDefault(x => $"{ConsoleHelper.TranslateDate(x.Item1.ToString("dddd"))} {x.Item1:dd} {ConsoleHelper.TranslateDate(x.Item1.ToString("MMMM"))}" == dayChoice.Key).Item1);
 
             static void ShowTimes(DateTime date)
             {

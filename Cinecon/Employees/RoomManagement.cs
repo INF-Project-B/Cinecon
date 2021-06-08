@@ -106,8 +106,8 @@ namespace Cinecon
 
             foreach (var date in JsonHelper.Days)
             {
-                var day = date.Item1.ToString("dddd dd MMMM");
-                dateOptions[char.ToUpper(day[0]) + day[1..]] = null;
+                var day = $"{ConsoleHelper.TranslateDate(date.Item1.ToString("dddd"))} {date.Item1:dd} {ConsoleHelper.TranslateDate(date.Item1.ToString("MMMM"))}";
+                dateOptions[day] = null;
             }
 
             var dateOptionsMenu = new ChoiceMenu(dateOptions, true, "   Voor welke dag wilt u de zalen bekijken?\n");
@@ -120,7 +120,7 @@ namespace Cinecon
                 return default;
             }
             else if (dateChoice.Value == null)
-                return JsonHelper.Days.FirstOrDefault(x => x.Item1.ToString("dddd dd MMMM") == dateChoice.Key.ToLower()).Item1;
+                return JsonHelper.Days.FirstOrDefault(x => $"{ConsoleHelper.TranslateDate(x.Item1.ToString("dddd"))} {x.Item1:dd} {ConsoleHelper.TranslateDate(x.Item1.ToString("MMMM"))}" == dateChoice.Key).Item1;
             else
                 return default;
         }
@@ -157,7 +157,7 @@ namespace Cinecon
         {
             Console.Clear();
 
-            ConsoleHelper.Breadcrumb = $"Zalen / {date.DayOfWeek} - {date:dd/MM} / Zaal {roomNumber}";
+            ConsoleHelper.Breadcrumb = $"Zalen / {ConsoleHelper.TranslateDate(date.ToString("dddd"))} - {date:dd/MM} / Zaal {roomNumber}";
 
             var rooms = GetAllRoomsByNumber(roomNumber);
             var room = GetRoom(roomNumber, date);
