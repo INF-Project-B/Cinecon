@@ -6,8 +6,11 @@ namespace Cinecon
 {
     public static class RoomManagement
     {
-        public static Room GetRoom(int roomNumber)
-            => JsonHelper.Rooms.FirstOrDefault(x => x.Number == roomNumber);
+        public static Room GetRoom(int roomNumber, DateTime date)
+            => JsonHelper.Days.FirstOrDefault(x => x.Item1 == date).Item2.FirstOrDefault(x => x.Number == roomNumber);
+
+        public static List<Room> GetAllRoomsByNumber(int roomNumber)
+            => JsonHelper.Days.Select(x => x.Item2).Select(x => x.FirstOrDefault(x => x.Number == roomNumber)).ToList();
 
         private static class RoomCreation
         {
@@ -36,7 +39,7 @@ namespace Cinecon
                 {
                     if (int.TryParse(ConsoleHelper.ReadLineWithText("   Wat is het zaalnummer? -> ", writeLine: false), out result))
                     {
-                        if (GetRoom(result) == null)
+                        if (JsonHelper.Days.FirstOrDefault().Item2.FirstOrDefault(x => x.Number == result) == null)
                             break;
                         else
                         {
@@ -97,36 +100,67 @@ namespace Cinecon
             }
         }
 
-        public static void ShowRoomOptions()
+        private static DateTime ShowDateOptions()
+        {
+            var dateOptions = new Dictionary<string, Action>();
+
+            foreach (var date in JsonHelper.Days)
+            {
+                var day = date.Item1.ToString("dddd dd MMMM");
+                dateOptions[char.ToUpper(day[0]) + day[1..]] = null;
+            }
+
+            var dateOptionsMenu = new ChoiceMenu(dateOptions, true, "   Voor welke dag wilt u de zalen bekijken?\n");
+
+            var dateChoice = dateOptionsMenu.MakeChoice();
+
+            if (dateChoice.Key == "Terug")
+            {
+                EmployeesMenu.ShowEmployeesMenu();
+                return default;
+            }
+            else if (dateChoice.Value == null)
+                return JsonHelper.Days.FirstOrDefault(x => x.Item1.ToString("dddd dd MMMM") == dateChoice.Key.ToLower()).Item1;
+            else
+                return default;
+        }
+
+        public static void ShowRoomOptions(DateTime date = default)
         {
             ConsoleHelper.Breadcrumb = "Zalen";
 
-            var roomOptions = new Dictionary<string, Action>();
+            date = date == default ? ShowDateOptions() : date;
 
-            roomOptions["Zaal toevoegen"] = ShowAddRoom;
+            ConsoleHelper.Breadcrumb = $"Zalen / {date.DayOfWeek} - {date:dd/MM}";
 
-            foreach (var room in JsonHelper.Rooms.OrderBy(x => x.Number))
+            var roomOptions = new Dictionary<string, Action>
+            {
+                ["Zaal toevoegen"] = ShowAddRoom
+            };
+
+            foreach (var room in JsonHelper.Days.FirstOrDefault(x => x.Item1.Date == date.Date).Item2.OrderBy(x => x.Number))
                 roomOptions[$"Zaal {room.Number}"] = null;
 
             var roomOptionsMenu = new ChoiceMenu(roomOptions, addBackChoice: true, roomOptions.Count > 0 ? "" : "   Geen zalen gevonden.");
 
             var roomOptionsChoice = roomOptionsMenu.MakeChoice();
 
-            if (roomOptionsChoice.Key == "Terug")
-                EmployeesMenu.ShowEmployeesMenu();
+            if (roomOptionsChoice.Key == "Terug")                            
+                ShowRoomOptions();
             else if (roomOptionsChoice.Value != null)
                 roomOptionsChoice.Value();
             else
-                ShowRoomManagement(int.Parse(roomOptionsChoice.Key.Replace("Zaal ", "")));
+                ShowRoomManagement(int.Parse(roomOptionsChoice.Key.Replace("Zaal ", "")), date);
         }
 
-        private static void ShowRoomManagement(int roomNumber)
+        private static void ShowRoomManagement(int roomNumber, DateTime date)
         {
             Console.Clear();
 
-            ConsoleHelper.Breadcrumb = $"Zalen / Zaal {roomNumber}";
+            ConsoleHelper.Breadcrumb = $"Zalen / {date.DayOfWeek} - {date:dd/MM} / Zaal {roomNumber}";
 
-            var room = GetRoom(roomNumber);
+            var rooms = GetAllRoomsByNumber(roomNumber);
+            var room = GetRoom(roomNumber, date);
 
             var roomInfoOptions = new ChoiceMenu(new Dictionary<string, Action>
             {
@@ -144,24 +178,31 @@ namespace Cinecon
             {
                 case "Terug":
                     Console.Clear();
-                    ShowRoomOptions();
-                    break;
+                    ShowRoomOptions(date);
+                    return;
                 case "Zaalnummer wijzigen":                    
                     ConsoleHelper.Breadcrumb += " / Zaalnummer wijzigen";
                     ConsoleHelper.WriteBreadcrumb();
-                    room.Number = RoomCreation.AskRoomNumber();
+                    int newNumber = RoomCreation.AskRoomNumber();
+                    foreach (var r in rooms)
+                        r.Number = newNumber;
                     JsonHelper.UpdateJsonFiles();
-                    break;
+                    ShowRoomManagement(newNumber, date);
+                    return;
                 case "Aantal rijen wijzigen":
                     ConsoleHelper.Breadcrumb += " / Aantal rijen wijzigen";
                     ConsoleHelper.WriteBreadcrumb();
-                    room.TotalRows = RoomCreation.AskTotalRows();
+                    int newRows = RoomCreation.AskTotalRows();
+                    foreach (var r in rooms)
+                        r.TotalRows = newRows;
                     JsonHelper.UpdateJsonFiles();
                     break;
                 case "Aantal stoelen per rij wijzigen":
                     ConsoleHelper.Breadcrumb += " / Aantal stoelen per rij wijzigen";
                     ConsoleHelper.WriteBreadcrumb();
-                    room.SeatsPerRow = RoomCreation.AskSeatsPerRow();
+                    int newSeatsPerRow = RoomCreation.AskSeatsPerRow();
+                    foreach (var r in rooms)
+                        r.SeatsPerRow = newSeatsPerRow;
                     JsonHelper.UpdateJsonFiles();
                     break;
                 case "Zaal verwijderen":
@@ -171,17 +212,16 @@ namespace Cinecon
                     var confirmationChoice = ChoiceMenu.CreateConfirmationChoiceMenu("   Weet je zeker dat je deze zaal wilt verwijderen?\n").MakeChoice();
                     if (confirmationChoice.Key == "Ja")
                     {
-                        JsonHelper.Rooms.Remove(room);
+                        foreach (var day in JsonHelper.Days)
+                            day.Item2.Remove(day.Item2.FirstOrDefault(x => x.Number == room.Number));
                         JsonHelper.UpdateJsonFiles();
                         Console.Clear();
                         ShowRoomOptions();
                     }
-                    else
-                        ShowRoomManagement(roomNumber);
                     break;
             }
 
-            ShowRoomManagement(room.Number);
+            ShowRoomManagement(roomNumber, date);
         }
 
         private static void ShowAddRoom()
@@ -197,7 +237,8 @@ namespace Cinecon
 
             if (roomOptionsChoice.Key == "Ja")
             {
-                JsonHelper.Rooms.Add(room);
+                foreach (var day in JsonHelper.Days)
+                    day.Item2.Add(room);
                 JsonHelper.UpdateJsonFiles();
             }
 

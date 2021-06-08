@@ -5,15 +5,7 @@
         "description": "In Godzilla vs. Kong nemen deze twee mythische tegenstanders het tegen elkaar op in een spectaculaire strijd...",
         "genres": ["Science fiction", "Fantasy"],
         "room": 1,
-        "days": {
-            "maandag": [ ],
-            "dinsdag": [ ],
-            "woensdag": [ "13:00-15:00", "22:00-24:00" ],
-            "donderdag": [ "16:00-18:00", "21:00-23:00" ],
-            "vrijdag": [ "15:00-17:00", "20:00-22:00" ],
-            "zaterdag": [ "15:00-17:00", "20:00-22:00" ],
-            "zondag": [ ]
-        },
+        "times": [ "15:00-17:00", "20:00-22:00" ],
         "bring_id": true
     },
     {
@@ -22,15 +14,7 @@
         "description": "John David Washington is de protagonist in Christopher Nolan’s nieuwe film, de actiethriller Tenet. Slechts gewapend met één woord – Tenet – moet de protagonist de wereld zien te redden van de ondergang...",
         "genres": [ "Thriller", "Drama", "Actie" ],
         "room": 1,
-        "days": {
-            "maandag": [ ],
-            "dinsdag": [ "15:00-17:00", "20:00-22:00" ],
-            "woensdag": [ "13:00-15:00", "22:00-24:00" ],
-            "donderdag": [ "16:00-18:00", "21:00-23:00" ],
-            "vrijdag": [ "15:00-17:00", "20:00-22:00" ],
-            "zaterdag": [ "15:00-17:00", "20:00-22:00" ],
-            "zondag": [ ]
-        },
+        "times": [ "13:00-15:00", "22:00-24:00" ],
         "bring_id": true
     },
     {
@@ -39,15 +23,7 @@
         "description": "De Keizer van China besluit dat één man per gezin moet dienen in het Keizerlijke leger om het land te kunnen verdedigen tegen indringers uit het Noorden. In het geheim neemt Hua Mulan, de oudste dochter van een respectabele krijger, de plaats in van haar doodzieke vader...",
         "genres": [ "Drama", "Avontuur" ],
         "room": 1,
-        "days": {
-            "maandag": [ ],
-            "dinsdag": [ "15:00-17:00", "20:00-22:00" ],
-            "woensdag": [ "13:00-15:00", "22:00-24:00" ],
-            "donderdag": [ "16:00-18:00", "21:00-23:00" ],
-            "vrijdag": [ "15:00-17:00", "20:00-22:00" ],
-            "zaterdag": [ "15:00-17:00", "20:00-22:00" ],
-            "zondag": [ ]
-        },
+        "times": [ "16:00-18:00", "21:00-23:00" ],
         "bring_id": false
     }
 ]

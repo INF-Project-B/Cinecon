@@ -17,6 +17,7 @@ namespace Cinecon
         public static void StartChoice()
         {
             ConsoleHelper.LogoType = LogoType.Cinecon;
+            ConsoleHelper.Breadcrumb = null;
 
             var choiceMenu = new ChoiceMenu(new Dictionary<string, Action>
             {

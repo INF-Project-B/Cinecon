@@ -4,6 +4,7 @@
         "total_seats": 6,
         "total_rows": 2,
         "seats_per_row": 3,
+        "date":  "",
         "seats": [
             {
                 "row": "A",
@@ -13,12 +14,12 @@
             {
                 "row": "A",
                 "number": 2,
-                "taken": true
+                "taken": false
             },
             {
                 "row": "A",
                 "number": 3,
-                "taken": true
+                "taken": false
             },
             {
                 "row": "B",

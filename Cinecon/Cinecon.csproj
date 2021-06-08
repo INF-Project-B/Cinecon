@@ -19,6 +19,9 @@
     <None Update="Assets\movies.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
+    <None Update="Assets\days.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Update="Assets\rooms.json">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
