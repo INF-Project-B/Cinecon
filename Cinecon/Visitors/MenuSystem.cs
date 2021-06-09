@@ -6,20 +6,31 @@ namespace Cinecon
 {
     public static class MenuSystem
     {
-        private static readonly List<KeyValuePair<string, decimal>> _menuCart = new List<KeyValuePair<string, decimal>>();
+        public static List<KeyValuePair<string, decimal>> MenuCart { get; private set; } = new List<KeyValuePair<string, decimal>>();
         public static string MenuCartText
         {
             get
             {
                 var menuCart = new List<KeyValuePair<string, decimal>>();
-                foreach (var item in _menuCart)
+                foreach (var item in MenuCart)
                 {
-                    var count = _menuCart.Count(x => x.Key == item.Key);
+                    var count = MenuCart.Count(x => x.Key == item.Key);
                     menuCart.Add(count > 1 ? new KeyValuePair<string, decimal>(item.Key + $" (x{count})", item.Value) : item);
                 }
-                return $"   Winkelmand (totaal: {_menuCart.Select(x => x.Value).Sum():0.00} euro)\n     {(menuCart.Any() ? string.Join("\n     ", menuCart.ToHashSet().Select(x => x.Key)) : "Leeg")}\n";
+                return $"   Winkelmand (totaal: {MenuCart.Select(x => x.Value).Sum():0.00} euro)\n     {(menuCart.Any() ? string.Join("\n     ", menuCart.ToHashSet().Select(x => x.Key)) : "Leeg")}\n";
             }
         }
+
+        private static void ClearMenuCart(bool clearTickets = false)
+        {
+            if (clearTickets)
+                MenuCart.Clear();
+            else
+                MenuCart = MenuCart.Where(x => x.Key.Contains("Ticket")).ToList();
+        }
+        
+        public static void AddToCart(string name, decimal price)
+            => MenuCart.Add(new KeyValuePair<string, decimal>(name, price));
 
         public static void ShowMenuConfirmation(DateTime date)
         {
@@ -32,7 +43,7 @@ namespace Cinecon
                 ShowMenu(date);
             else
             {
-                _menuCart.Clear();
+                ClearMenuCart();
                 PaymentSystem.StartPaymentProcess(date);
             }
         }
@@ -55,10 +66,10 @@ namespace Cinecon
             var categoryChoice = categoryChoiceMenu.MakeChoice();
 
             if (categoryChoice.Key == "Terug")
-                ShowMenuConfirmation(date);
+                ReservationSystem.ShowSeats(date);
             else if (categoryChoice.Key == "Winkelmand legen")
             {
-                _menuCart.Clear();
+                ClearMenuCart();
                 ShowMenu(date);
             }
             else if (categoryChoice.Key == "Ga door")
@@ -108,7 +119,7 @@ namespace Cinecon
             else
             {
                 var itemTypeData = itemTypes.FirstOrDefault(x => typeChoice.Key.Contains(x.Key));
-                _menuCart.Add(new KeyValuePair<string, decimal>($"{menuItem} {itemTypeData.Key.ToLower()} - {itemTypeData.Value:0.00}", itemTypeData.Value));
+                AddToCart($"{menuItem} {itemTypeData.Key.ToLower()} - {itemTypeData.Value:0.00}", itemTypeData.Value);
                 ShowMenu(date);
             }
         }
