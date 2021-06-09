@@ -45,6 +45,40 @@ namespace Cinecon
             WriteBreadcrumb();
         }
 
+        public static string TranslateDate(string date)
+        {
+            return date switch 
+            {
+                "Monday" => "Maandag",
+                "Tuesday" => "Dinsdag",
+                "Wednesday" => "Woensdag",
+                "Thursday" => "Donderdag",
+                "Friday" => "Vrijdag",
+                "Saturday" => "Zaterdag",
+                "Sunday" => "Zondag",
+                "maandag" => "Maandag",
+                "dinsdag" => "Dinsdag",
+                "woensdag" => "Woensdag",
+                "donderdag" => "Donderdag",
+                "vrijdag" => "Vrijdag",
+                "zaterdag" => "Zaterdag",
+                "zondag" => "Zondag",
+                "January" => "januari",
+                "February" => "februari",
+                "March" => "maart",
+                "April" => "april",
+                "May" => "mei",
+                "June" => "juni",
+                "July" => "juli",
+                "August" => "augustus",
+                "September" => "september",
+                "October" => "oktober",
+                "November" => "november",
+                "December" => "december",
+                _ => date
+            };
+        }
+
         public static void WriteLogo(ConsoleColor color = ConsoleColor.White)
         {
             string text = LogoType switch
