@@ -6,7 +6,7 @@ namespace Cinecon
 {
     public static class MenuSystem
     {
-        private static readonly List<KeyValuePair<string, decimal>> _menuCart = new List<KeyValuePair<string, decimal>>();
+        private static List<KeyValuePair<string, decimal>> _menuCart { get; set; } = new List<KeyValuePair<string, decimal>>();
         public static string MenuCartText
         {
             get
@@ -21,6 +21,17 @@ namespace Cinecon
             }
         }
 
+        private static void ClearMenuCart(bool clearTickets = false)
+        {
+            if (clearTickets)
+                _menuCart.Clear();
+            else
+                _menuCart = _menuCart.Where(x => x.Key.Contains("Ticket")).ToList();
+        }
+        
+        public static void AddToCart(string name, decimal price)
+            => _menuCart.Add(new KeyValuePair<string, decimal>(name, price));
+
         public static void ShowMenuConfirmation(DateTime date)
         {
             ConsoleHelper.LogoType = LogoType.Films;
@@ -32,7 +43,7 @@ namespace Cinecon
                 ShowMenu(date);
             else
             {
-                _menuCart.Clear();
+                ClearMenuCart();
                 PaymentSystem.StartPaymentProcess(date);
             }
         }
@@ -55,10 +66,10 @@ namespace Cinecon
             var categoryChoice = categoryChoiceMenu.MakeChoice();
 
             if (categoryChoice.Key == "Terug")
-                ShowMenuConfirmation(date);
+                ReservationSystem.ShowSeats(date);
             else if (categoryChoice.Key == "Winkelmand legen")
             {
-                _menuCart.Clear();
+                ClearMenuCart();
                 ShowMenu(date);
             }
             else if (categoryChoice.Key == "Ga door")
@@ -108,7 +119,7 @@ namespace Cinecon
             else
             {
                 var itemTypeData = itemTypes.FirstOrDefault(x => typeChoice.Key.Contains(x.Key));
-                _menuCart.Add(new KeyValuePair<string, decimal>($"{menuItem} {itemTypeData.Key.ToLower()} - {itemTypeData.Value:0.00}", itemTypeData.Value));
+                AddToCart($"{menuItem} {itemTypeData.Key.ToLower()} - {itemTypeData.Value:0.00}", itemTypeData.Value);
                 ShowMenu(date);
             }
         }

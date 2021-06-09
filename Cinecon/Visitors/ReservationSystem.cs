@@ -11,6 +11,7 @@ namespace Cinecon
         public static List<Seat> SelectedSeats { get; private set; }
         public static string Time { get; private set; }
         private static int _ticketsAmount;
+        private static readonly decimal _ticketPrice = 11; 
 
         public static void ChooseTicketsAmount(Movie movie, DateTime date, string time, bool error = false)
         {
@@ -31,7 +32,7 @@ namespace Cinecon
 
             int availableSeatsCount = room.Seats.Count(x => !x.IsTaken);
 
-            Console.Write($"   Hoeveel tickets wil je bestellen? ({availableSeatsCount} beschikbaar) -> ");
+            Console.Write($"   Hoeveel tickets wilt u bestellen? ({availableSeatsCount} beschikbaar) -> ");
 
             if (!int.TryParse(Console.ReadLine(), out _ticketsAmount) || _ticketsAmount < 1 || _ticketsAmount > availableSeatsCount)
             {
@@ -57,7 +58,11 @@ namespace Cinecon
             var confirmationChoice = confirmationMenu.MakeChoice();
 
             if (confirmationChoice.Key == "Ja")
+            {
+                for (int i = 0; i < _ticketsAmount; i++)
+                    MenuSystem.AddToCart($"Ticket {SelectedMovie.Title} - {_ticketPrice:0.00}", _ticketPrice);
                 ShowSeats(date);
+            }
             else
                 ShowFilmInfo(SelectedMovie.Title);
         }
