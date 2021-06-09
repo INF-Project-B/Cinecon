@@ -6,31 +6,31 @@ namespace Cinecon
 {
     public static class MenuSystem
     {
-        public static List<KeyValuePair<string, decimal>> MenuCart { get; private set; } = new List<KeyValuePair<string, decimal>>();
+        private static List<KeyValuePair<string, decimal>> _menuCart { get; set; } = new List<KeyValuePair<string, decimal>>();
         public static string MenuCartText
         {
             get
             {
                 var menuCart = new List<KeyValuePair<string, decimal>>();
-                foreach (var item in MenuCart)
+                foreach (var item in _menuCart)
                 {
-                    var count = MenuCart.Count(x => x.Key == item.Key);
+                    var count = _menuCart.Count(x => x.Key == item.Key);
                     menuCart.Add(count > 1 ? new KeyValuePair<string, decimal>(item.Key + $" (x{count})", item.Value) : item);
                 }
-                return $"   Winkelmand (totaal: {MenuCart.Select(x => x.Value).Sum():0.00} euro)\n     {(menuCart.Any() ? string.Join("\n     ", menuCart.ToHashSet().Select(x => x.Key)) : "Leeg")}\n";
+                return $"   Winkelmand (totaal: {_menuCart.Select(x => x.Value).Sum():0.00} euro)\n     {(menuCart.Any() ? string.Join("\n     ", menuCart.ToHashSet().Select(x => x.Key)) : "Leeg")}\n";
             }
         }
 
         private static void ClearMenuCart(bool clearTickets = false)
         {
             if (clearTickets)
-                MenuCart.Clear();
+                _menuCart.Clear();
             else
-                MenuCart = MenuCart.Where(x => x.Key.Contains("Ticket")).ToList();
+                _menuCart = _menuCart.Where(x => x.Key.Contains("Ticket")).ToList();
         }
         
         public static void AddToCart(string name, decimal price)
-            => MenuCart.Add(new KeyValuePair<string, decimal>(name, price));
+            => _menuCart.Add(new KeyValuePair<string, decimal>(name, price));
 
         public static void ShowMenuConfirmation(DateTime date)
         {
