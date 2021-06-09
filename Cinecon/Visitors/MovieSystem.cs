@@ -229,11 +229,14 @@ namespace Cinecon
             foreach (var genre in JsonHelper.Genres)
                 genreChoices[genre] = null;
 
-            var genreChoiceMenu = new ChoiceMenu(genreChoices,addExtraButton: true);
+            var genreChoiceMenu = new ChoiceMenu(genreChoices, addExtraButton: true);
             
             _genres = genreChoiceMenu.MakeMultipleChoice(_genres);
-        
-            ShowFilteredFilms();
+
+            if (_genres.Count() == 0)
+                ShowFilms();
+            else
+                ShowFilteredFilms();
         }
     }
 }
