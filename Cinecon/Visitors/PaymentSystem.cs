@@ -16,31 +16,62 @@ namespace Cinecon
 
             ConsoleHelper.LogoType = LogoType.Films;
             ConsoleHelper.Breadcrumb = $"Films / {movie.Title} / Koop tickets / Betaling";
+            ConsoleHelper.WriteLogoAndBreadcrumb();
+            Console.CursorVisible = true;
 
             string name;
             string email;
-
-            do
+            while (true)
             {
-                ConsoleHelper.WriteLogoAndBreadcrumb();
-                name = ConsoleHelper.ReadLineWithText("   Onder welke naam wil je reserveren? -> ", writeLine: false);
+                name = ConsoleHelper.ReadLineWithText("   Onder welke naam wilt u reserveren? -> ", writeLine: false);
+                var correctName = ChoiceMenu.CreateConfirmationChoiceMenu($"   Wilt u verder gaan met de naam {name}?\n");
+                if (string.IsNullOrEmpty(name))
+                {
+                    ConsoleHelper.WriteLogoAndBreadcrumb();
+                    ConsoleHelper.ColorWriteLine("   Vul a.u.b. een naam in\n", ConsoleColor.Red);
+                }
+                else
+                {
+                    Console.Clear();
+                    var correctNameChoice = correctName.MakeChoice();
+                    if (correctNameChoice.Key == "Ja")
+                    {
+                        Console.Clear();
+                        break;
+                    }
+                    else
+                        ConsoleHelper.WriteLogoAndBreadcrumb();
+                }
             }
-            while (string.IsNullOrEmpty(name));
 
-            var invalidEmail = false;
+            ConsoleHelper.WriteLogoAndBreadcrumb();
             var emailRegex = new Regex(@"^([\w\.\-]+)@([\w\-]+)((\.(\w){2,3})+)$");
 
-            do
+            while (true)
             {
-                ConsoleHelper.WriteLogoAndBreadcrumb();
-                if (invalidEmail)
-                    ConsoleHelper.ColorWriteLine("   Voer a.u.b. een valide e-mail adres in.\n", ConsoleColor.Red);
-                email = ConsoleHelper.ReadLineWithText("   Wat is jouw e-mail adres? -> ", writeLine: false);
-                invalidEmail = true;
-            }
-            while (!emailRegex.Match(email).Success);
+                email = ConsoleHelper.ReadLineWithText("   Wat is uw e-mail adres? -> ", writeLine: false);
+                var correctMail = ChoiceMenu.CreateConfirmationChoiceMenu($"   Wilt u verder gaan met de volgende mail: {email}?\n");
 
-            Console.Clear();
+                if (!emailRegex.Match(email).Success)
+                {
+                    ConsoleHelper.WriteLogoAndBreadcrumb();
+                    ConsoleHelper.ColorWriteLine("   Voer a.u.b. een geldige e-mail adres in.\n", ConsoleColor.Red);
+                }
+                else 
+                {
+                    Console.Clear();
+                    var correctMailChoice = correctMail.MakeChoice();
+                    if (correctMailChoice.Key == "Ja")
+                    {
+                        Console.Clear();
+                        break;
+                    }
+                    else
+                        ConsoleHelper.WriteLogoAndBreadcrumb();
+                }
+            }
+
+            Console.CursorVisible = false;
 
             var paymentMethods = new Dictionary<string, Action>();
 
