@@ -34,8 +34,6 @@ namespace Cinecon
                 ShowFilmInfo(movieChoice.Key);
         }
        
-
-
         public static void ListOfFilms()
         {
             ConsoleHelper.LogoType = LogoType.Films;
@@ -75,9 +73,6 @@ namespace Cinecon
             else
                 ShowDateAndTime(movie);
         }
-        
-
-
 
         private static void ShowDateAndTime(Movie movie)
         {
@@ -139,8 +134,6 @@ namespace Cinecon
                 ReservationSystem.ChooseTicketsAmount(movie, JsonHelper.Days.FirstOrDefault(x => $"{ConsoleHelper.TranslateDate(x.Item1.ToString("dddd"))} {x.Item1:dd} {ConsoleHelper.TranslateDate(x.Item1.ToString("MMMM"))}" == day).Item1, timeChoice.Key);
         }        
 
-
-
         public static void ShowFilms()
         {
             ConsoleHelper.LogoType = LogoType.Films;
@@ -149,17 +142,18 @@ namespace Cinecon
 
             Dictionary<string, Action> movies = new Dictionary<string, Action>
             {
-                    { "Filter op genres", ShowGenresFilter },
-                    { "Filter op dagen", ShowDaysFilter }
+                { "Filter op genres", ShowGenresFilter },
+                { "Filter op dagen", ShowDaysFilter }
             };
+
             if (_genres == null)
                 movies["Bekijk alle films"] = ListOfFilms;
-
             else
             {
                 movies["Reset filters"] = () => { _genres = null; };
                 movies["Bekijk alle films"] = ListOfFilms;
             }
+
             var movieMenu = new ChoiceMenu(movies, true);
 
             var movieChoice = movieMenu.MakeChoice();
