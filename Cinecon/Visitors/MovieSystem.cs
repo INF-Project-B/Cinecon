@@ -196,7 +196,7 @@ namespace Cinecon
 
                 foreach (var room in JsonHelper.Days.FirstOrDefault(x => x.Item1 == date).Item2)
                     foreach (var movie in room.Movies)
-                        foreach (var time in movie.Times)
+                        foreach (var time in movie.Times.OrderBy(x => x))
                             filmTimes[$"{time} {movie.Title}"] = null;
 
                 var text = filmTimes.Count > 0 ? "" : "   Geen tijden gevonden.";

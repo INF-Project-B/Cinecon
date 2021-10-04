@@ -157,7 +157,7 @@ namespace Cinecon
             };
             var seats = $"{(reservation.Seats.Count() > 1 ? "stoelen zijn: " : "stoel is ")}";
             var count = 1;
-            foreach (var seat in reservation.Seats)
+            foreach (var seat in reservation.Seats.OrderBy(x => $"{x.Row}{x.Number}"))
             {
                 seats += $"{seat.Row}{seat.Number}{(reservation.Seats.Count()-1 == count ? " en " : reservation.Seats.Count() > count ? ", " : "")}";
                 count++;
